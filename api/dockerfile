@@ -1,0 +1,18 @@
+# Use the base Node.js 14 image
+FROM node:14
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the application code into the container
+COPY . /app
+
+# Install dependencies for the entire application
+RUN npm install
+
+# Expose the port on which your APIs listen (adjust the port number according to your application)
+EXPOSE 3001
+
+# Define the default command to run your APIs
+WORKDIR /app
+CMD ["node", "api.js"]
