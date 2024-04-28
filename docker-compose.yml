@@ -1,0 +1,31 @@
+  version: '3'
+  services:
+
+    api:
+      build: ./api
+      ports:
+        - "3001:3001"
+      environment:
+        - NODE_ENV=production
+      restart: on-failure
+
+    db:
+      image: postgres:latest
+      environment:
+        POSTGRES_USER: billbudyUser
+        POSTGRES_PASSWORD: billbudy
+        POSTGRES_DB: billbudy
+        PGDATA: /var/lib/postgresql/data/pgdata
+      ports:
+        - "3002:5432"
+      volumes:
+        - db_data:/var/lib/postgresql/data
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 3003:8080
+
+  volumes:
+    db_data:
