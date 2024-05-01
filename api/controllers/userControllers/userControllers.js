@@ -1,11 +1,7 @@
-const { Client } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { dbConfig } = require('../../utils/constants');
+const { client } = require('../../utils/constants');
 const secret = 'secret';
-
-const client = new Client(dbConfig);
-client.connect();
 
 const login = async (req, res) => {
     try {
