@@ -1,29 +1,36 @@
-  version: '3'
-  services:
+version: '3'
+services:
 
-    api:
-      build: ./api
-      ports:
-        - "3001:3001"
-      restart: on-failure
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: billbudyUser
+      POSTGRES_PASSWORD: billbudy
+      POSTGRES_DB: billbudy
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "3002:5432"
+    container_name: billbudy_db
+    volumes:
+      - gestion_db_data:/var/lib/postgresql/data
 
-    db:
-      image: postgres:latest
-      environment:
-        POSTGRES_USER: billbudyUser
-        POSTGRES_PASSWORD: billbudy
-        POSTGRES_DB: billbudy
-        PGDATA: /var/lib/postgresql/data/pgdata
-      ports:
-        - "3002:5432"
-      volumes:
-        - db_data:/var/lib/postgresql/data
+  api:
+    build: ./api
+    ports:
+      - "3001:3001"
+    container_name: billbudy_api
+    depends_on:
+      - db
+    restart: on-failure
 
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - 3003:8080
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 3003:8080
 
-  volumes:
-    db_data:
+volumes:
+  gestion_db_data:
+    name: gestion_db_data
