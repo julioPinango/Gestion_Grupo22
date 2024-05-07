@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Button from '../components/Button'
 
 
 export default function Register () {
@@ -11,8 +12,11 @@ export default function Register () {
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
     const[date, setDate] = useState("");
+    
 
-
+    const capitalizeFirstLetter = (word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    };
 
     const createUser = async () => {
         try {
@@ -33,8 +37,7 @@ export default function Register () {
               throw new Error('Failed to create user');
             }
         
-            const responseData = await response.json();
-            console.log('User created successfully:', responseData);    
+            window.location.href = "/login";
         
         } catch (error) {
             console.error('Error creating user:', error.message);
@@ -59,13 +62,13 @@ export default function Register () {
                     <label>Nombre</label>
                     <input type="text"
                     value={name} 
-                    onChange={(e)=> setName(e.target.value)} />
+                    onChange={(e)=> setName(capitalizeFirstLetter(e.target.value))} />
 
                     <label htmlFor="">Apellido</label>
                     <input 
                     type="text"
                     value={lastname} 
-                    onChange={(e)=> setLastname(e.target.value)} />
+                    onChange={(e)=> setLastname(capitalizeFirstLetter(e.target.value))} />
 
                     <label htmlFor="">Nombre de usuario</label>
                     <input 
@@ -90,10 +93,13 @@ export default function Register () {
                     type="date"
                     value={date} 
                     onChange={(e)=> setDate(e.target.value)} />
+                    
 
-                    <button type="submit" className="button">Registrarme</button>
+                    <Button text="Registrarme"/>
+                    
+                </form>
+                
 
-                    </form>
             </body>
             <div>
                 <Footer/>

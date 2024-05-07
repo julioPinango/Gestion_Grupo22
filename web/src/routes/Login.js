@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import './Home.css';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Button from '../components/Button'
+
 
 export default function Login () {
     const [email, setEmail] = useState("");
@@ -23,14 +25,13 @@ export default function Login () {
                 throw new Error("Failed to login");
             }     
             
-            const data = await response.json();
-            localStorage.setItem("token", data.jwt);
-    
+            
             window.location.href = "/dashboard";
 
         } catch (error) {
           console.error("Error logging in:", error.message);
         }
+        
     };
 
 
@@ -39,7 +40,7 @@ export default function Login () {
             <div>
                 <Header/>
             </div>
-            <main>
+            <body>
                 <form className="form" onSubmit={handleLogin}>
                     <h1>Ingreso</h1>
 
@@ -55,9 +56,11 @@ export default function Login () {
                     value={password} 
                     onChange={(e)=> setPassword(e.target.value)} />
 
-                    <button type="submit" className="button">Ingresar</button>
+                    
+                    <Button text="Ingresar"/>
+
                 </form>
-            </main>
+            </body>
             <div>
                 <Footer/>
             </div>

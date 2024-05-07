@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Button from '../components/Button'
+
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -11,8 +13,10 @@ const UserList = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
+        
         const data = await response.json();
         setUsers(data.users);
+
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -66,9 +70,7 @@ const UserList = () => {
             </div>
 
         <div className="container text-right mt-5">
-          <div className="d-flex justify-content-end">
-            <button className="button">Crear grupo</button>
-          </div>
+          <Button text="Crear grupo"/>
         </div>
               
         </div>

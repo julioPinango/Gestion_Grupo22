@@ -2,7 +2,6 @@ import './App.css';
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import Home from './routes/Home';
-import Login from './routes/Login';
 
 
 function App() {
@@ -14,14 +13,11 @@ function App() {
             <li>
               <Link to="/">Home</Link>
             </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
+            
           </ul>
         </nav>
 
         <Route path="/" exact component={Home} />
-        <Route path="/login" component={Login} />
       </div>
     </Router>
   );

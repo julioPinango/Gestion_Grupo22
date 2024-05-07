@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import './Home.css'; 
@@ -10,12 +9,30 @@ function Home() {
       <div>
         <Header/>
       </div>
-      <main>
-        <h2 className="body">Welcome to the Home Page</h2>
+
+      <body>
+
+
         <div class="container text-center mt-5">
-          <a href="/login" class="btn btn-primary">Login</a>
+
+          <h2 className="body">Welcome to BillBuddy</h2>
+          <p>(better than Splitw...)</p>
+
+          <div class="row align-items-start">
+
+            <div class="col border-bottom">
+              <a href="/login" class="btn btn-primary">Ingresar</a>
+            </div>
+            <div class="col border-bottom">
+              <a href="/register" class="btn btn-primary">Registrarme</a>
+            </div>
+
+          </div>
+
         </div>
-      </main>
+
+      </body>
+
       <div>
         <Footer/>
       </div>
