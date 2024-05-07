@@ -6,7 +6,9 @@ import App from './App';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import Register from './routes/Register';
-import Users from './routes/UsersList';
+import Users from './components/UsersList';
+import Dashboard from './routes/Dashboard';
+import CreateGroup from './routes/CreateGroup';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
   {
     path:"/register",
     element:<Register/>,
+  },
+  {
+    path:"/dashboard",
+    element:<Dashboard/>,
+  },
+  {
+    path:"/group/create",
+    element:<CreateGroup/>,
   },
   {
     path:"/users",

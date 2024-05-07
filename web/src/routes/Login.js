@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import './Home.css';
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 export default function Login () {
     const [email, setEmail] = useState("");
@@ -34,9 +36,9 @@ export default function Login () {
 
     return (
         <div className="Home"> 
-            <header className="header"> 
-                <h1 className="title">BillBuddy</h1>
-            </header>
+            <div>
+                <Header/>
+            </div>
             <main>
                 <form className="form" onSubmit={handleLogin}>
                     <h1>Ingreso</h1>
@@ -56,9 +58,9 @@ export default function Login () {
                     <button type="submit" className="button">Ingresar</button>
                 </form>
             </main>
-            <footer className="footer"> 
-                <p>BillBuddy 2024</p>
-            </footer>
+            <div>
+                <Footer/>
+            </div>
         </div>
     )
 };
