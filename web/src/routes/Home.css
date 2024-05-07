@@ -1,0 +1,27 @@
+.Home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #00a200;
+  padding: 20px;
+}
+
+.body {
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+}
+
+.footer {
+  background-color: darkgrey;
+  padding: 20px;
+  margin-top: auto;
+  text-align: center;
+  color:lightgrey;
+} 
+
