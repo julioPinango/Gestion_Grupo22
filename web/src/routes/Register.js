@@ -34,18 +34,25 @@ export default function Register () {
             });
         
             if (!response.ok) {
-              throw new Error('Failed to create user');
+                const errorData = await response.json();
+                throw new Error(errorData.message);
             }
         
             window.location.href = "/login";
         
         } catch (error) {
             console.error('Error creating user:', error.message);
+            alert('Register failed: ' + error.message);
         }
     };
 
 
     const handleRegister = async (e) => {
+        if(name === '' || lastname === '' || username === ''){
+            alert('Campos incompletos');
+            return;
+        }
+    
         e.preventDefault(); 
         await createUser(); 
     };

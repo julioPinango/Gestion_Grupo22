@@ -2,11 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import App from './App';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import Register from './routes/Register';
-import Users from './components/UsersList';
 import Dashboard from './routes/Dashboard';
 import CreateGroup from './routes/CreateGroup';
 import reportWebVitals from './reportWebVitals';
@@ -33,10 +31,6 @@ const router = createBrowserRouter([
     path:"/group/create",
     element:<CreateGroup/>,
   },
-  {
-    path:"/users",
-    element:<Users/>,
-  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

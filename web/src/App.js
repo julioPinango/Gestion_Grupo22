@@ -8,15 +8,6 @@ function App() {
   return (
     <Router>
       <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            
-          </ul>
-        </nav>
-
         <Route path="/" exact component={Home} />
       </div>
     </Router>

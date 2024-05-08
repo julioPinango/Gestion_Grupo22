@@ -22,14 +22,15 @@ export default function Login () {
             });   
 
             if (!response.ok) {
-                throw new Error("Failed to login");
+                const errorData = await response.json();
+                throw new Error(errorData.message);
             }     
-            
             
             window.location.href = "/dashboard";
 
         } catch (error) {
-          console.error("Error logging in:", error.message);
+            console.error('Login failed:', error.message);
+            alert('Login failed: ' + error.message);
         }
         
     };
