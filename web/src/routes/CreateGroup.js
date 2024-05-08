@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import UserList from '../components/UsersList';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -9,7 +8,7 @@ function CreateGroup() {
   return (
     <div className="Home"> {}
        <div>
-            <Header/>
+            <Header href='/dashboard'/>
         </div>
         <body>
             <h2 className="body">Seleccionar usuarios para grupo</h2>

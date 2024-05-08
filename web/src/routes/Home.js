@@ -7,7 +7,7 @@ function Home() {
   return (
     <div className="Home"> {}
       <div>
-        <Header/>
+        <Header href='/'/>
       </div>
 
       <body>

@@ -60,7 +60,7 @@ export default function Register () {
     return (
         <div className="Home"> 
             <div>
-                <Header/>
+                <Header href='/'/>
             </div>
             <body>
                 <form className="form" onSubmit={handleRegister}>

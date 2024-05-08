@@ -7,7 +7,7 @@ function Dashboard() {
   return (
     <div className="Home"> {}
         <div>
-            <Header/>
+            <Header href='/dashboard'/>
         </div>
         <body className="container mt-5">
 

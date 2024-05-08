@@ -39,7 +39,7 @@ export default function Login () {
     return (
         <div className="Home"> 
             <div>
-                <Header/>
+                <Header href='/'/>
             </div>
             <body>
                 <form className="form" onSubmit={handleLogin}>
