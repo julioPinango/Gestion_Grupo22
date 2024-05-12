@@ -4,7 +4,7 @@ A website that helps people keep track of shared expenses and split bills with f
 
 `make start` to start de app
 
-`make create-users` Creates the table **users** in the db.
+`make create-tables` Creates db's tables.
 
 `make stop` to stop de containers.
 
@@ -15,10 +15,10 @@ A website that helps people keep track of shared expenses and split bills with f
 # Endpoints
 
 ## Users
-**Base URL**: localhost/users
+**Base URL**: /users
 
 ### Create
-**POST** localhost/users
+**POST** /users
 
 ```
 {
@@ -32,24 +32,13 @@ A website that helps people keep track of shared expenses and split bills with f
 ```
 
 ### Get user
-**GET** localhost/users/avilagaston
+**GET** /users/avilagaston
 
 ### Get users
-**GET** localhost/users
-
-```
-{
-  "name": "Gaston",
-  "lastname": "Avila",
-  "username": "avilagaston",
-  "email": "gavila@fi.uba.ar",
-  "password": "1234",
-  "date_of_birth": "11/11/1111"
-}
-```
+**GET** /users
 
 ### Login
-**POST** localhost/users/login
+**POST** /users/login
 
 ```
 {
@@ -57,6 +46,37 @@ A website that helps people keep track of shared expenses and split bills with f
   "password": "1234"
 }
 ```
+## Groups
+**Base URL**: /groups
+
+### Create
+**POST** /groups
+
+```
+{
+  "name": "Grupo 22",
+  "description": "Grupo de gestion nro 22. 1C2024"
+}
+```
+
+### Get group
+**GET** /groups/group_id
+
+### Get groups
+**GET** /groups
+
+## Members
+
+### Add member
+**POST** /groups/group_id/members
+```
+{
+  "username": "avilagaston",
+}
+```
+
+### Get members
+**GET** /groups/group_id/members
 
 
 ## WIP...

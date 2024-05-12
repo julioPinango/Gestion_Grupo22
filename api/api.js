@@ -7,7 +7,9 @@ app.use(bodyParser.json());
 const PORT = 3001;
 const { connectToDatabase } = require("./utils/constants");
 const { createUser, login, getUsers, getUser } = require("./controllers/userControllers/userControllers");
-const { createGroup, deleteGroup, getGroups, getGroup } = require("./controllers/groupControllers/groupControllers");
+const { createGroup, getGroups, getGroup } = require("./controllers/groupControllers/groupControllers");
+const { getMembers, addMember, deleteMember } = require("./controllers/memberControllers/memberControllers");
+const { authenticateToken } = require("./authMiddleware/middleware");
 
 //User Queries  
 app.get("/users/", getUsers);
@@ -16,11 +18,17 @@ app.post("/users", createUser);
 app.post("/users/login", login);
 
 //Group Queries
-app.get("/users/:username/groups/", getGroups);
-app.get("/users/:username/groups/:group_id", getGroup);
-app.post("/users/:username/groups", createGroup);
-app.delete("/users/:username/groups/:group_id", deleteGroup);
-//app.patch("/events/:event_id", authenticateToken, editEvent);
+app.get("/groups/", authenticateToken, getGroups);
+app.get("/groups/:group_id", authenticateToken, getGroup);
+app.post("/groups", authenticateToken, createGroup);
+// app.delete("/groups/:group_id", authenticateToken, deleteGroup);
+
+//Members Queries
+app.get("/groups/:group_id/members", authenticateToken, getMembers);
+app.post("/groups/:group_id/members", authenticateToken, addMember);
+app.delete("/groups/:group_id/members", authenticateToken, deleteMember);
+
+
 
 
 
