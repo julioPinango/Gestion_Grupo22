@@ -7,12 +7,20 @@ app.use(bodyParser.json());
 const PORT = 3001;
 const { connectToDatabase } = require("./utils/constants");
 const { createUser, login, getUsers, getUser } = require("./controllers/userControllers/userControllers");
+const { createGroup, deleteGroup, getGroups, getGroup } = require("./controllers/groupControllers/groupControllers");
 
 //User Queries  
 app.get("/users/", getUsers);
 app.get("/users/:username", getUser);
 app.post("/users", createUser);
 app.post("/users/login", login);
+
+//Group Queries
+app.get("/users/:username/groups/", getGroups);
+app.get("/users/:username/groups/:group_id", getGroup);
+app.post("/users/:username/groups", createGroup);
+app.delete("/users/:username/groups/:group_id", deleteGroup);
+//app.patch("/events/:event_id", authenticateToken, editEvent);
 
 
 
