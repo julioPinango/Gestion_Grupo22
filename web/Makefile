@@ -1,4 +1,4 @@
-.PHONY: start
+.PHONY: start stop
 
 start:
 	docker-compose up -d --build

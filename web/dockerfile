@@ -16,11 +16,5 @@ COPY . .
 # Install Bootstrap
 RUN npm install bootstrap
 
-# Expose the port on which your React app will run (adjust the port number according to your application)
-EXPOSE 3000
-
 # Define the default command to run your React app
 CMD ["npm", "start"]
-
-# Define a volume to mount the current directory into the container
-VOLUME ["/web"]
