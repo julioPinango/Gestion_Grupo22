@@ -1,0 +1,20 @@
+# Use the base Node.js 14 image
+FROM node:14
+
+# Navigate into the frontend directory
+WORKDIR /web
+
+# Copy just the package.json and package-lock.json files into the container
+COPY package*.json ./
+
+# Install dependencies for the frontend
+RUN npm install
+
+# Copy the rest of the frontend files into the container
+COPY . .
+
+# Install Bootstrap
+RUN npm install bootstrap
+
+# Define the default command to run your React app
+CMD ["npm", "start"]
