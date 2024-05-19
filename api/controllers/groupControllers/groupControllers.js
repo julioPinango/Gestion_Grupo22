@@ -27,29 +27,6 @@ const createGroup = async (req, res) => {
     }
 };
 
-// const deleteGroup = async (req, res) => {
-
-//     const GroupId = parseInt(req.params.group_id, 10);
-//     if (!req.user.admin) {
-//         res.status(401).json({ message: "Usuario no autorizado para esta operación" });
-//         return;
-//     }
-
-//     try {
-//         const result = await client.query(`DELETE FROM Groups WHERE Group_id = $1`, [GroupId]);
-
-//         if (result.rowCount > 0) {
-//             res.status(200).json({ message: `Groupo con ID ${GroupId} eliminado exitosamente` });
-
-//         } else {
-//             res.status(404).send(`No se encontró ningún Groupo con ID ${GroupId}`);
-//         }
-//     } catch (error) {
-//         console.error("Error al eliminar Groupo", error);
-//         res.status(500).send("Error en el servidor");
-//     }
-// };
-
 const getGroups = async (req, res) => {
     try {
         const username = req.user.username;
