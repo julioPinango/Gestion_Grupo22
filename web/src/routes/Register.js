@@ -108,9 +108,9 @@ export default function Register () {
                 
 
             </body>
-            <div>
+           {/* <div> 
                 <Footer/>
-            </div>
+            </div> */}
         </div>
     )
     
