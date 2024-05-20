@@ -32,7 +32,7 @@ A website that helps people keep track of shared expenses and split bills with f
 ```
 
 ### Get user
-**GET** /users/avilagaston
+**GET** /users/{username}
 
 ### Get users
 **GET** /users
@@ -60,7 +60,7 @@ A website that helps people keep track of shared expenses and split bills with f
 ```
 
 ### Get group
-**GET** /groups/group_id
+**GET** /groups/{group_id}
 
 ### Get groups
 **GET** /groups
@@ -68,7 +68,7 @@ A website that helps people keep track of shared expenses and split bills with f
 ## Members
 
 ### Add member
-**POST** /groups/group_id/members
+**POST** /groups/{group_id}/members
 ```
 {
   "username": "avilagaston",
@@ -76,7 +76,10 @@ A website that helps people keep track of shared expenses and split bills with f
 ```
 
 ### Get members
-**GET** /groups/group_id/members
+**GET** /groups/{group_id}/members
+
+### Delete members
+**DELETE** /groups/{group_id}/members/{username}
 
 
 ## WIP...

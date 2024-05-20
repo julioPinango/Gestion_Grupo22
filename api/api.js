@@ -26,7 +26,8 @@ app.post("/groups", authenticateToken, createGroup);
 //Members Queries
 app.get("/groups/:group_id/members", authenticateToken, getMembers);
 app.post("/groups/:group_id/members", authenticateToken, addMember);
-app.delete("/groups/:group_id/members", authenticateToken, deleteMember);
+app.delete("/groups/:group_id/members/:username", authenticateToken, deleteMember);
+
 
 
 

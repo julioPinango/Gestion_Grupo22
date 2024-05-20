@@ -1,3 +1,10 @@
+`make start` to start frontend container
+
+`make stop` to stop frontend container
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
