@@ -81,5 +81,17 @@ A website that helps people keep track of shared expenses and split bills with f
 ### Delete members
 **DELETE** /groups/{group_id}/members/{username}
 
+## Balances
+
+### Get balances
+**GET** /groups/{group_id}/balances
+
+### Add balances
+**POST** /groups/{group_id}/balances
+```
+{
+  "expenses": 100,
+}
+```
 
 ## WIP...
