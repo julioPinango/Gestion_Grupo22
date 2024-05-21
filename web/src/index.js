@@ -9,6 +9,7 @@ import Dashboard from './routes/Dashboard';
 import CreateGroup from './routes/CreateGroup';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import UserList from './components/UsersList';
 
 const router = createBrowserRouter([
   {
@@ -24,13 +25,17 @@ const router = createBrowserRouter([
     element:<Register/>,
   },
   {
-    path:"/dashboard",
+    path:"/groups",
     element:<Dashboard/>,
   },
   {
     path:"/group/create",
     element:<CreateGroup/>,
   },
+  {
+    path:"/groups/add/:id",
+    element:<UserList/>,
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
