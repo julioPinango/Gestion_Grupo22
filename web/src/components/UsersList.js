@@ -73,16 +73,15 @@ const UserList = () => {
               <td>{user1.lastname}</td>
               <td>{user1.username}</td>
               <td>
-                <button
+                {/*<button
                   type="button"
                   class="btn btn-primary"
                   //onChange={() => setUsername(user1.username)}
-                  onClick={()=>addMember(user1.username)}
-
-                  
+                  onClick={()=>addMember(user1.username)}    
                 >
                   Añadir
                 </button>
+          */}
               </td>
             </tr>
           ))}
