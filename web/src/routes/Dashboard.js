@@ -68,12 +68,12 @@ function Dashboard() {
                       aria-label="Basic example"
                     >
                       <div class="btn-group">
-                      <button class="btn btn-primary">
-                          Editar
+                      <button onClick={() =>  navigate(`${group.id}`)} class="btn btn-primary">
+                          Ver grupo
                         </button>
-                        <button onClick={() =>  navigate(`add/${group.id}`)} class="btn btn-warning">
+                        {/*<button onClick={() =>  navigate(`add/${group.id}`)} class="btn btn-warning">
                           Añadir participantes
-                        </button>
+              </button>*/}
                       </div>
                       
                     </div>
