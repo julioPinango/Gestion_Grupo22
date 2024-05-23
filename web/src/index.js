@@ -1,52 +1,57 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
-import Home from './routes/Home';
-import Login from './routes/Login';
-import Register from './routes/Register';
-import Dashboard from './routes/Dashboard';
-import CreateGroup from './routes/CreateGroup';
-import Group from './routes/Group';
-import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import UserList from './components/UsersList';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
+import Home from "./routes/Home";
+import Login from "./routes/Login";
+import Register from "./routes/Register";
+import Dashboard from "./routes/Dashboard";
+import CreateGroup from "./routes/CreateGroup";
+import Group from "./routes/Group";
+import reportWebVitals from "./reportWebVitals";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import UserList from "./components/UsersList";
+import AddExpense from "./routes/AddExpense";
 
 const router = createBrowserRouter([
   {
-    path:"/",
-    element:<Home/>,
+    path: "/",
+    element: <Home />,
   },
   {
-    path:"/login",
-    element:<Login/>,
+    path: "/login",
+    element: <Login />,
   },
   {
-    path:"/register",
-    element:<Register/>,
+    path: "/register",
+    element: <Register />,
   },
   {
-    path:"/groups",
-    element:<Dashboard/>,
+    path: "/groups",
+    element: <Dashboard />,
   },
   {
-    path:"/group/create",
-    element:<CreateGroup/>,
+    path: "/group/create",
+    element: <CreateGroup />,
   },
   {
-    path:"/groups/add/:id",
-    element:<UserList/>,
+    path: "/groups/add/:id",
+    element: <UserList />,
   },
   {
-    path:"/groups/:id",
-  element:<Group/>,
-}
+    path: "/groups/:id",
+    element: <Group />,
+  },
+  {
+    path: "/groups/:id/add-expense",
+    element: <AddExpense />,
+  },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

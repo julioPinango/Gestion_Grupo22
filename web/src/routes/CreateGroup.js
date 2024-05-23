@@ -5,12 +5,11 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
 import "./Home.css";
+import { Link } from 'react-router-dom';
 
 function CreateGroup() {
   const [name, setName] = useState("");
-  const [balance, setBalance] = useState("");
   const [description, setDescription] = useState("");
-  const [members, setMembers] = useState([]);
 
   const navigate = useNavigate(); // useNavigate hook from react-router-dom
   const token = localStorage.getItem("jwt-token");
@@ -21,12 +20,11 @@ function CreateGroup() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token // Use Bearer token
+          Authorization: token, // Use Bearer token
         },
         body: JSON.stringify({
           name,
           description,
-          members,
         }),
       });
 
@@ -37,10 +35,10 @@ function CreateGroup() {
       }
 
       console.log(data);
-      const groupId = data.groupId; // 
+      //const groupId = data.groupId; //
 
       // Redirect to the group page
-      navigate(`/groups/${groupId}`);
+      navigate('/groups');
     } catch (error) {
       console.error("Error creando el grupo:", error.message);
       alert("No se pudo crear el grupo: " + error.message);
@@ -58,9 +56,9 @@ function CreateGroup() {
   };
 
   return (
-    <div className="Home">
+    <div className="Home text-center">
       <div>
-        <Header href="/dashboard" />
+        <Header href="/groups" />
       </div>
       <body>
         <form className="form" onSubmit={handleCreateGroup}>
@@ -80,7 +78,7 @@ function CreateGroup() {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <label className="sr-only">Usuarios añadidos</label>
+          {/*<label className="sr-only">Usuarios añadidos</label>
           <input
             type="text"
             value={members}
@@ -93,10 +91,11 @@ function CreateGroup() {
             value={balance}
             onChange={(e) => setBalance(e.target.value)}
           />
-
-          <div className="container text-right mt-5">
+  */}
+          <div className="container text-right mt-5 text-center">
             <Button text="Crear grupo" />
           </div>
+          
         </form>
       </body>
       <div></div>
