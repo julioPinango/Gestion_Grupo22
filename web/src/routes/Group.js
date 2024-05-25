@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate, Link } from 'react-router-dom';
 import Header from "../components/Header";
+import { decodeToken } from "react-jwt";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
   const [usuarioAAgregar, setUsuarioAAgregar] = useState("");
   const params = useParams();
+  const [isAdmin, setIsAdmin] = useState(false);
+
   
   useEffect(() => {
     const fetchGroup = async () => {
@@ -86,6 +89,45 @@ const Group = () => {
     }
   };
 
+
+
+  useEffect(() => {
+
+    const checkIsAdmin = async () => {
+      try {
+        const token = localStorage.getItem("jwt-token");
+
+
+        const response = await fetch(`http://localhost:3001/groups/${params.id}/admin`, {
+          method: 'GET',
+          headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }});
+        
+        if (response.ok) {
+          const responseData = await response.json();
+          const adminUsername = responseData.admin;
+          
+          const decodedToken = decodeToken(token);
+          
+
+          if (decodedToken.username === adminUsername){
+            setIsAdmin(true);
+          }
+        }
+       
+        
+      } catch (error) {
+        console.error('Error verifying token:', error);
+      }
+    };
+
+    checkIsAdmin();
+  }, []);
+
+
+
   return (
     <div className="text-center"> {/* Center the content */}
     <div>
@@ -126,15 +168,17 @@ const Group = () => {
               <td>{user1.lastname}</td>
               <td>{user1.username}</td>
               <td>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => deleteMember(user1.username)}
-                >
-                  Eliminar participante
-                </button>
-                <Link to={`/groups/${params.id}/add-expense`}>
+                {isAdmin && ( 
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => deleteMember(user1.username)}
+                  >
+                    Eliminar participante
+                  </button>              
+                )}
 
+                <Link to={`/groups/${params.id}/add-expense`}>
                 <button
                   type="button"
                   className="btn btn-primary"
