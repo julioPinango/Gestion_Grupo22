@@ -76,6 +76,46 @@ const getGroup = async (req, res) => {
         res.status(500).send("Error en el servidor");
     }
 };
+const updateGroup = async (req, res) => {
+    try {
+        const groupId = req.params.group_id;
+        const username = req.user.username;
+
+        const {
+            name,
+            description,
+        } = req.body;
+
+        const existingGroup = await client.query('SELECT * FROM groups WHERE id = $1 AND admin = $2', [groupId, username]);
+        if (existingGroup.rows.length === 0) {
+            console.error('Error in update: group not found');
+            return res.status(404).json({ message: 'group not found' });
+        }
+
+        const updateFields = {
+            name: name || existingGroup.rows[0].name,
+            description: description || existingGroup.rows[0].description,
+        };
+
+        const result = await client.query(
+            'UPDATE groups SET name = $1, description = $2 WHERE id = $3',
+            [
+                updateFields.name,
+                updateFields.description,
+                groupId,
+            ]
+        );
+
+        if (result.rowCount === 0) {
+            console.error('Error in update: group information not updated');
+            return res.status(500).json({ message: 'Error updating group information' });
+        }
+        res.json({ message: "Group updated" });
+    } catch (error) {
+        console.error('Error in update:', error);
+        res.status(500).send('Error in the server');
+    }
+};
 
 const getAdmin = async (req, res) => {
     try {
@@ -101,4 +141,4 @@ const getAdmin = async (req, res) => {
     }
 };
 
-module.exports = { createGroup, getGroups, getGroup, getAdmin };
+module.exports = { createGroup, getGroups, getGroup, getAdmin, updateGroup };

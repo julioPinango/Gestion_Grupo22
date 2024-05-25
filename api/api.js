@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 const PORT = 3001;
 const { connectToDatabase } = require("./utils/constants");
 const { createUser, login, getUsers, getUser } = require("./controllers/userControllers/userControllers");
-const { createGroup, getGroups, getGroup, getAdmin } = require("./controllers/groupControllers/groupControllers");
+const { createGroup, getGroups, getGroup, getAdmin, updateGroup } = require("./controllers/groupControllers/groupControllers");
 const { getMembers, addMember, deleteMember } = require("./controllers/memberControllers/memberControllers");
 const { getBalances, addExpenses } = require("./controllers/balanceControllers/balanceControllers");
 const { authenticateToken } = require("./authMiddleware/middleware");
@@ -23,6 +23,7 @@ app.get("/groups/", authenticateToken, getGroups);
 app.get("/groups/:group_id", authenticateToken, getGroup);
 app.post("/groups", authenticateToken, createGroup);
 app.get("/groups/:group_id/admin", authenticateToken, getAdmin);
+app.patch("/groups/:group_id", authenticateToken, updateGroup);
 
 //Members Queries
 app.get("/groups/:group_id/members", authenticateToken, getMembers);
