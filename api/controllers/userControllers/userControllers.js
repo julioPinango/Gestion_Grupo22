@@ -85,7 +85,7 @@ const getUser = async (req, res) => {
     try {
         const username = req.params.username;
         const result = await client.query("SELECT name, lastname, username, email, date_of_birth FROM users WHERE username = $1", [username]);
-        res.json({ user: result.rows });
+        res.json({ user: result.rows[0] });
     } catch (error) {
         console.error("Error al obtener los datos:", error);
         res.status(500).send("Error en el servidor");

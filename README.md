@@ -59,11 +59,24 @@ A website that helps people keep track of shared expenses and split bills with f
 }
 ```
 
-### Get group
-**GET** /groups/{group_id}
 
 ### Get groups
 **GET** /groups
+
+
+### Get group
+**GET** /groups/{group_id}
+
+### Get group admin
+**GET** /groups/{group_id}/admin
+
+### Update group
+**PATCH** /groups/{group_id}
+```
+{
+  "description": "This is the new description.",
+}
+```
 
 ## Members
 
