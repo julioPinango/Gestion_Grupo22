@@ -1,6 +1,20 @@
 const { client } = require('../../utils/constants');
 
 
+const isMember = async (groupId, username) => {
+    try {
+        let result = await client.query('SELECT * FROM members WHERE username = $1 AND group_id = $2', [username, groupId]);
+
+        if (result.rows.length === 0) {
+            return false
+        }
+        return true;
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        return false
+    }
+};
+
 const getMembers = async (req, res) => {
     try {
         const groupId = req.params.group_id;
@@ -89,4 +103,4 @@ const deleteMember = async (req, res) => {
     }
 };
 
-module.exports = { getMembers, addMember, deleteMember };
+module.exports = { getMembers, addMember, deleteMember, isMember };

@@ -1,5 +1,5 @@
 const { client } = require('../../utils/constants');
-
+const { isMember } = require("../memberControllers/memberControllers");
 
 const createGroup = async (req, res) => {
     try {
@@ -52,6 +52,11 @@ const getGroups = async (req, res) => {
 const getGroup = async (req, res) => {
     try {
         const groupId = req.params.group_id;
+        const username = req.user.username;
+
+        if (!await isMember(groupId, username)) {
+            return res.status(401).json({ message: 'Not authorized.' });
+        }
 
         const query = {
             text: `
@@ -65,11 +70,35 @@ const getGroup = async (req, res) => {
 
         const result = await client.query(query);
 
-        res.json({ group: result.rows });
+        res.json({ group: result.rows[0] });
     } catch (error) {
         console.error("Error al obtener los datos:", error);
         res.status(500).send("Error en el servidor");
     }
 };
 
-module.exports = { createGroup, getGroups, getGroup };
+const getAdmin = async (req, res) => {
+    try {
+        const username = req.user.username;
+        const groupId = req.params.group_id;
+
+        if (!await isMember(groupId, username)) {
+            return res.status(401).json({ message: 'Not authorized.' });
+        }
+        const query = {
+            text: `
+            SELECT admin
+            FROM groups g
+            WHERE id = $1`,
+            values: [groupId]
+        };
+
+        const result = await client.query(query);
+        return res.json(result.rows[0]);
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error en el servidor");
+    }
+};
+
+module.exports = { createGroup, getGroups, getGroup, getAdmin };
