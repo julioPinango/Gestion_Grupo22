@@ -141,4 +141,18 @@ const getAdmin = async (req, res) => {
     }
 };
 
-module.exports = { createGroup, getGroups, getGroup, getAdmin, updateGroup };
+const isAdmin = async (groupId, username) => {
+    try {
+        let result = await client.query('SELECT * FROM groups WHERE admin = $1 AND group_id = $2', [username, groupId]);
+
+        if (result.rows.length === 0) {
+            return false
+        }
+        return true;
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        return false
+    }
+};
+
+module.exports = { createGroup, getGroups, getGroup, getAdmin, updateGroup, isAdmin };

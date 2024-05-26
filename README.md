@@ -84,7 +84,7 @@ A website that helps people keep track of shared expenses and split bills with f
 **POST** /groups/{group_id}/members
 ```
 {
-  "username": "avilagaston",
+  "username": "avilagaston"
 }
 ```
 
@@ -99,12 +99,16 @@ A website that helps people keep track of shared expenses and split bills with f
 ### Get balances
 **GET** /groups/{group_id}/balances
 
-### Add balances
-**POST** /groups/{group_id}/balances
+### Add transaction
+**POST** /groups/{group_id}/transactions
 ```
 {
-  "expenses": 100,
+  "amount": 100,
+  "receivers": ["avilagaston", "avilagaston2"]
 }
 ```
+
+### Get transactions
+**GET** /groups/{group_id}/transactions
 
 ## WIP...
