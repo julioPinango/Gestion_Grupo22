@@ -53,5 +53,33 @@ const _addTransaction = async (groupId, from, to, amount) => { //TODO: handle er
     }
 };
 
+const getTransactions = async (req, res) => {
+    try {
+        const username = req.user.username;
+        const groupId = req.params.group_id;
 
-module.exports = { addTransaction };
+        if (!await isMember(groupId, username)) {
+            console.error("Error at getting transactions: Not a member.");
+            return res.status(401).json({ message: 'Not authorized.' });
+        }
+
+
+        const query = {
+            text: `
+            SELECT *
+            FROM transactions t
+            WHERE t.group_id = $1`,
+            values: [groupId]
+        };
+
+        const result = await client.query(query);
+
+        res.json({ Transactions: result.rows });
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error en el servidor");
+    }
+};
+
+
+module.exports = { addTransaction, getTransactions };

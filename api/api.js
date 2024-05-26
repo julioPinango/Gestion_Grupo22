@@ -10,7 +10,7 @@ const { createUser, login, getUsers, getUser } = require("./controllers/userCont
 const { createGroup, getGroups, getGroup, getAdmin, updateGroup } = require("./controllers/groupControllers/groupControllers");
 const { getMembers, addMember, deleteMember } = require("./controllers/memberControllers/memberControllers");
 const { getBalances } = require("./controllers/balanceControllers/balanceControllers");
-const { addTransaction } = require("./controllers/transactionControllers/transactionControllers");
+const { addTransaction, getTransactions } = require("./controllers/transactionControllers/transactionControllers");
 const { authenticateToken } = require("./authMiddleware/middleware");
 
 //User Queries  
@@ -34,7 +34,8 @@ app.delete("/groups/:group_id/members/:username", authenticateToken, deleteMembe
 //Balances Queries
 app.get("/groups/:group_id/balances", authenticateToken, getBalances);
 
-//Balances Queries
+//Transactions Queries
+app.get("/groups/:group_id/transactions", authenticateToken, getTransactions);
 app.post("/groups/:group_id/transactions", authenticateToken, addTransaction);
 
 
