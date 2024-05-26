@@ -1,4 +1,5 @@
 const { client } = require('../../utils/constants');
+const { isMember } = require("../memberControllers/memberControllers");
 
 
 const getBalances = async (req, res) => {
@@ -6,11 +7,9 @@ const getBalances = async (req, res) => {
         const groupId = req.params.group_id;
         const username = req.user.username;
 
-        let result = await client.query('SELECT * FROM members WHERE username = $1 AND group_id = $2', [username, groupId]);
-
-        if (result.rows.length === 0) {
+        if (!await isMember(groupId, username)) {
             console.error("Error in get Balances: not a member.");
-            return res.status(401).json({ message: 'Not a member.' });
+            return res.status(401).json({ message: 'Not authorized.' });
         }
         const query = {
             text: `
@@ -35,10 +34,7 @@ const addExpenses = async (req, res) => {
         const expenses = req.body.expenses;
         const username = req.user.username;
 
-
-        let result = await client.query('SELECT * FROM members WHERE username = $1 AND group_id = $2', [username, groupId]);
-
-        if (result.rows.length === 0) {
+        if (!await isMember(groupId, username)) {
             console.error("Error adding expenses: Not a member.");
             return res.status(401).json({ message: 'Not a member.' });
         }
