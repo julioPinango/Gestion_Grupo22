@@ -40,7 +40,7 @@ function AddExpense() {
       {" "}
       {}
       <div>
-        <Header href="/dashboard" />
+        <Header href={`/groups/${params.id}`} />
       </div>
       <body>
         <div class="container text-center mt-5">
