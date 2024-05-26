@@ -7,6 +7,7 @@ import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Dashboard from "./routes/Dashboard";
 import CreateGroup from "./routes/CreateGroup";
+import EditGroup from "./routes/EditGroup";
 import Group from "./routes/Group";
 import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/group/create",
     element: <CreateGroup />,
+  },
+  {
+    path: "/groups/:id/edit",
+    element: <EditGroup />,
   },
   {
     path: "/groups/add/:id",
