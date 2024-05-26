@@ -108,4 +108,7 @@ A website that helps people keep track of shared expenses and split bills with f
 }
 ```
 
+### Get transactions
+**GET** /groups/{group_id}/transactions
+
 ## WIP...
