@@ -1,4 +1,5 @@
 const { client } = require('../../utils/constants');
+const { updateBalances } = require('../balanceControllers/balanceControllers');
 const { isMember } = require("../memberControllers/memberControllers");
 
 const addTransaction = async (req, res) => {
@@ -43,7 +44,10 @@ const _addTransaction = async (groupId, from, to, amount) => { //TODO: handle er
             text: `INSERT INTO transactions (group_id, from_username, to_username, amount) VALUES ($1,$2,$3,$4)`,
             values: [groupId, from, to, amount]
         };
-        result = await client.query(query);
+        await client.query(query);
+
+        await updateBalances(amount, groupId, from)
+        await updateBalances(-amount, groupId, to)
     } catch (error) {
         console.error("Error al obtener los datos:", error);
     }
