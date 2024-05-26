@@ -42,8 +42,8 @@ function EditGroup() {
       // Redirect to the group page
       navigate(`/groups/${params.id}`);
     } catch (error) {
-      console.error("Error creando el grupo:", error.message);
-      alert("No se pudo crear el grupo: " + error.message);
+      console.error("Error editando el grupo:", error.message);
+      alert("No se pudo editar el grupo: " + error.message);
     }
   };
 
