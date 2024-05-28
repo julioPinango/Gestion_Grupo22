@@ -13,6 +13,7 @@ import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import UserList from "./components/UsersList";
 import AddExpense from "./routes/AddExpense";
+import Transactions from "./routes/Transactions";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
     path: "/groups/:id/add-expense",
     element: <AddExpense />,
   },
+  {
+    path: "/groups/:id/transactions",
+    element: <Transactions />,
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -64,3 +69,4 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
