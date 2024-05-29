@@ -5,29 +5,36 @@ const { isMember } = require("../memberControllers/memberControllers");
 const addTransaction = async (req, res) => {
     try {
         const groupId = req.params.group_id;
-        const from = req.user.username;
+        const username = req.user.username;
         const amount = req.body.amount;
-        const receivers = req.body.receivers;
+        const participants = req.body.participants;
+        const payer = req.body.payer;
+        const description = req.body.description;
 
-        if (!await isMember(groupId, from)) { //TODO: maybe let admin add any transaction.
+        if (!await isMember(groupId, username)) {
             console.error("Error at adding transaction: Not a member.");
             return res.status(401).json({ message: 'Not authorized.' });
         }
-
-        for (let i = 0; i < receivers.length; i++) {
-            if (!await isMember(groupId, receivers[i])) {
-                console.error("Error at adding transaction: Receiver not a member.");
-                return res.status(401).json({ message: 'Receiver not a member.' });
+        if (!await isMember(groupId, payer)) {
+            console.error("Error at adding transaction: Payer not a member.");
+            return res.status(401).json({ message: 'Payer not a member.' });
+        }
+        for (let i = 0; i < participants.length; i++) {
+            if (!await isMember(groupId, participants[i])) {
+                console.error("Error at adding transaction: Participant not a member.");
+                return res.status(401).json({ message: 'Participant not a member.' });
             }
         }
-
         if (amount <= 0) {
             console.error("Error adding transaction: Invalid amount.");
             return res.status(401).json({ message: 'Invalid amount.' });
         }
 
-        for (let i = 0; i < receivers.length; i++) { // TODO: handle errors
-            await _addTransaction(groupId, from, receivers[i], amount / (receivers.length + 1))
+        for (let i = 0; i < participants.length; i++) { // TODO: handle errors
+            if (payer == participants[i]) {
+                continue
+            }
+            await _addTransaction(groupId, payer, participants[i], amount / participants.length, description)
         }
 
         res.status(200).json({ message: 'Transaction added' });
@@ -37,12 +44,12 @@ const addTransaction = async (req, res) => {
     }
 };
 
-const _addTransaction = async (groupId, from, to, amount) => { //TODO: handle errors
+const _addTransaction = async (groupId, from, to, amount, description) => { //TODO: handle errors
     try {
 
         const query = {
-            text: `INSERT INTO transactions (group_id, from_username, to_username, amount) VALUES ($1,$2,$3,$4)`,
-            values: [groupId, from, to, amount]
+            text: `INSERT INTO transactions (group_id, from_username, to_username, amount, description) VALUES ($1,$2,$3,$4,$5)`,
+            values: [groupId, from, to, amount, description]
         };
         await client.query(query);
 
