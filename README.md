@@ -104,9 +104,13 @@ A website that helps people keep track of shared expenses and split bills with f
 ```
 {
   "amount": 100,
-  "receivers": ["avilagaston", "avilagaston2"]
+  "participants": ["avilagaston", "avilagaston2"],
+  "payer": "avilagaston",
+  "description": "Bus tickets"
 }
 ```
+
+(The payer may or may not be a participant)
 
 ### Get transactions
 **GET** /groups/{group_id}/transactions
