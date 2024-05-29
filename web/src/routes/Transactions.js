@@ -62,11 +62,12 @@ const Transactions = () => {
       </div>
 
       <div>
-    <PDFDownloadLink document={<DocuPDF />} fileName="somename.pdf">
-      {({ blob, url, loading, error }) =>
-        loading ? 'Loading document...' : 'Download now!'
-      }
-    </PDFDownloadLink>
+      <PDFDownloadLink
+        document={<DocuPDF transactions={transactions} />}
+        fileName="transactions.pdf"
+      >
+        <button variant="info">Descargar PDF</button>
+      </PDFDownloadLink>
   </div>
     </div>
   );
