@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams,Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
 import DocuPDF from "./DocuPDF";
@@ -37,38 +37,47 @@ const Transactions = () => {
       <div>
         <Header href="/groups" />
       </div>
-      
-      <div className="table-responsive mt-5">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Monto</th>
-              <th scope="col">De</th>
-              <th scope="col">Hacia</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction, index) => (
-              <tr key={index}>
-                <th scope="row">{index}</th>
-                <td>{transaction.amount}</td>
-                <td>{transaction.from_username}</td>
-                <td>{transaction.to_username}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      <div>
-      <PDFDownloadLink
-        document={<DocuPDF transactions={transactions} />}
-        fileName="transactions.pdf"
-      >
-        <button variant="info">Descargar PDF</button>
-      </PDFDownloadLink>
-  </div>
+      {transactions && transactions.length > 0 ? (
+        <div className="table-responsive mt-5">
+          <table className="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Monto</th>
+                <th scope="col">De</th>
+                <th scope="col">Hacia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((transaction, index) => (
+                <tr key={index}>
+                  <th scope="row">{index}</th>
+                  <td>{transaction.amount}</td>
+                  <td>{transaction.from_username}</td>
+                  <td>{transaction.to_username}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="mt-5">
+          <h1>No hay transacciones aún</h1>
+        </div>
+      )}
+
+      
+{transactions && transactions.length > 0 && (
+        <div>
+          <PDFDownloadLink
+            document={<DocuPDF transactions={transactions} />}
+            fileName="transactions.pdf"
+          >
+            <button className="btn btn-info">Descargar transacciones en formato PDF</button>
+          </PDFDownloadLink>
+        </div>
+      )}
     </div>
   );
 };

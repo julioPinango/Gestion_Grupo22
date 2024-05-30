@@ -38,7 +38,7 @@ export default function Register () {
                 throw new Error(errorData.message);
             }
         
-            window.location.href = "/login";
+            window.location.href = "/groups";
         
         } catch (error) {
             console.error('Error creating user:', error.message);

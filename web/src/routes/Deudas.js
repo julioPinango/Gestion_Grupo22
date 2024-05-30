@@ -3,13 +3,13 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
 import DocuPDF from "./DocuPDF";
 
-const MyTransactions = () => {
+const Deudas = () => {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/transactions", {
+        const response = await fetch("http://localhost:3001/mytransactions", {
           headers: {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
@@ -83,4 +83,4 @@ const MyTransactions = () => {
   );
 };
 
-export default MyTransactions;
+export default Deudas;

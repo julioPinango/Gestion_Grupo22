@@ -80,7 +80,7 @@ const Group = () => {
       }, 3000);
     } catch (error) {
       console.error("Error eliminando el participante:", error.message);
-      alert("No se pudo eliminar el participante: " + error.message);
+      //alert("No se pudo eliminar el participante: " + error.message);
     }
   };
 
@@ -224,6 +224,7 @@ const Group = () => {
   };
 
   const closeModal = () => {
+    setSelectedMember(null);
     setShowModal(false);
   };
 
@@ -298,8 +299,8 @@ const Group = () => {
       >
         Ver transacciones
       </button>
-      <div className="table-responsive mt-5">
-        <table className="table table-striped table-sm">
+      <div className="table table-sm">
+        <table className="table table-sm">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -310,7 +311,7 @@ const Group = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user1, index) => (
+            {users ?  users.map((user1, index) => (
               <tr key={index}>
                 <th scope="row">{index}</th>
                 <td>{user1.name}</td>
@@ -321,25 +322,26 @@ const Group = () => {
                     <button
                       type="button"
                       className="btn btn-danger"
-                      onClick={() => openModal(user1)}
+                      onClick={()=>handleDelete(user1.username)}
                     >
                       Eliminar participante
                     </button>
                   )}
                 </td>
               </tr>
-            ))}
+            )): null }
           </tbody>
         </table>
       </div>
-
+     
       {showAlert && (
-        <div className="alert alert-danger" role="alert">
-          {alertMessage}
-        </div>
+        <div className={`alert ${selectedMember ? 'alert-danger' : 'alert-success'}`} role="alert">
+    {alertMessage}
+  </div>
       )}
 
-      {/*<GenericModal
+       {/*
+      <GenericModal
         showModal={showModal}
         handleClose={closeModal}
         title="Eliminar miembro del grupo"
@@ -391,7 +393,7 @@ const Group = () => {
                     Destinatarios
                   </label>
                   <div>
-                    {users.map((user, index) => (
+                    {users ? users.map((user, index) => (
                       <div className="form-check" key={index}>
                         <input
                           className="form-check-input"
@@ -408,7 +410,7 @@ const Group = () => {
                           {user.username}
                         </label>
                       </div>
-                    ))}
+                    )): null}
                   </div>
                 </div>
                 <div className="mb-3">

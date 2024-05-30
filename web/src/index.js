@@ -13,6 +13,7 @@ import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 import UserList from "./components/UsersList";
 import Transactions from "./routes/Transactions";
+import Deudas from "./routes/Deudas";
 import MyTransactions from "./routes/MyTransactions";
 
 const getAccessToken = () =>{
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: "/transactions",
         element: <MyTransactions />,
+      },
+      {
+        path: "/deudas",
+        element: <Deudas />,
       }
     ]
   }
