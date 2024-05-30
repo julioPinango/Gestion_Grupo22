@@ -109,5 +109,26 @@ const getTransactionsByUser = async (req, res) => {
         res.status(500).send("Error en el servidor");
     }
 };
- 
-module.exports = { addTransaction, getTransactions, getTransactionsByUser };
+
+const getMyTransactions = async (req, res) => {
+    try {
+        const username = req.user.username;
+
+        const query = {
+            text: `
+            SELECT *
+            FROM transactions t
+            WHERE t.to_username = $1`,
+            values: [username]
+        };
+
+        const result = await client.query(query);
+
+        res.json({ Transactions: result.rows });
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error en el servidor");
+    }
+};
+
+module.exports = { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions };

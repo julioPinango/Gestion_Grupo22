@@ -71,7 +71,7 @@ function CreateGroup() {
             onChange={(e) => setName(e.target.value)}
           />
 
-          <label className="sr-only">Descripcion</label>
+          <label >Descripcion</label>
           <input
             type="text"
             value={description}

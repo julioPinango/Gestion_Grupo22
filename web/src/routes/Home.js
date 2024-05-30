@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import "./Home.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import DocuPDF from "./DocuPDF";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -20,14 +21,21 @@ function Home() {
 
           <div class="row align-items-start">
             <div class="col border-bottom">
-              <a href="/login" class="btn btn-primary">
+              
+              <Link
+                to="/login"
+                className="btn btn-primary"
+              >
                 Ingresar
-              </a>
+              </Link>
             </div>
             <div class="col border-bottom">
-              <a href="/register" class="btn btn-primary">
+            <Link
+                to="/register"
+                className="btn btn-primary"
+              >
                 Registrarme
-              </a>
+              </Link>
             </div>
           </div>
         </div>
