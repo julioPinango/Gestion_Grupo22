@@ -15,8 +15,9 @@ const Group = () => {
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [amount, setAmount] = useState(0);
-  const [receivers, setReceivers] = useState([]);
+  const [participants, setParticipants] = useState([]);
   const [description, setDescription] = useState("");
+  const [payer, setPayer] = useState("");
   const params = useParams();
   const [isAdmin, setIsAdmin] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -29,13 +30,16 @@ const Group = () => {
 
   const fetchGroup = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/groups/${params.id}/members`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}/members`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+        }
+      );
 
       const data = await response.json();
       setUsers(data.Groups);
@@ -46,23 +50,30 @@ const Group = () => {
 
   const handleDelete = async (username) => {
     try {
-      const response = await fetch(`http://localhost:3001/groups/${params.id}/members/${username}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}/members/${username}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete member");
       }
 
-      setUsers((prevUsers) => prevUsers.filter((user) => user.username !== username));
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.username !== username)
+      );
       setShowModal(false);
 
       // Mostrar la alerta
-      setAlertMessage(`El usuario "${username}" ha sido eliminado del grupo con éxito!`);
+      setAlertMessage(
+        `El usuario "${username}" ha sido eliminado del grupo con éxito!`
+      );
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -75,20 +86,25 @@ const Group = () => {
 
   const addMember = async (member) => {
     try {
-      const response = await fetch(`http://localhost:3001/groups/${params.id}/members`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-        body: JSON.stringify({ username: member }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}/members`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+          body: JSON.stringify({ username: member }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to add member");
       }
       // Mostrar la alerta
-      setAlertMessage(`El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`);
+      setAlertMessage(
+        `El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`
+      );
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -110,14 +126,17 @@ const Group = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3001/groups/${params.id}/transactions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-        body: JSON.stringify({ amount, receivers, description }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}/transactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+          body: JSON.stringify({ payer, amount, participants, description }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -126,7 +145,7 @@ const Group = () => {
 
       setShowExpenseModal(false);
       setAmount(0);
-      setReceivers([]);
+      setParticipants([]);
       setDescription("");
       fetchGroup();
     } catch (error) {
@@ -140,13 +159,16 @@ const Group = () => {
       try {
         const token = localStorage.getItem("jwt-token");
 
-        const response = await fetch(`http://localhost:3001/groups/${params.id}/admin`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:3001/groups/${params.id}/admin`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        );
 
         if (response.ok) {
           const responseData = await response.json();
@@ -169,17 +191,22 @@ const Group = () => {
   useEffect(() => {
     const getGroupInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/groups/${params.id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("jwt-token"),
-          },
-        });
+        const response = await fetch(
+          `http://localhost:3001/groups/${params.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("jwt-token"),
+            },
+          }
+        );
 
         if (response.ok) {
           const responseData = await response.json();
-          let name = responseData.group.name.charAt(0).toUpperCase() + responseData.group.name.slice(1);
+          let name =
+            responseData.group.name.charAt(0).toUpperCase() +
+            responseData.group.name.slice(1);
           setGroupName(name);
           setGroupDescription(responseData.group.description);
         }
@@ -212,16 +239,15 @@ const Group = () => {
     setShowAddUserModal(true);
   };
 
-
   const closeAddUserModal = () => {
     setShowAddUserModal(false);
   };
 
   const handleCheckboxChange = (username) => {
-    setReceivers((prevReceivers) =>
-      prevReceivers.includes(username)
-        ? prevReceivers.filter((receiver) => receiver !== username)
-        : [...prevReceivers, username]
+    setParticipants((prevParticipants) =>
+      prevParticipants.includes(username)
+        ? prevParticipants.filter((receiver) => receiver !== username)
+        : [...prevParticipants, username]
     );
   };
 
@@ -237,7 +263,10 @@ const Group = () => {
           <span>
             {groupDescription}
             {isAdmin && (
-              <a href={`/groups/${params.id}/edit`} style={{ padding: "0 10px" }}>
+              <a
+                href={`/groups/${params.id}/edit`}
+                style={{ padding: "0 10px" }}
+              >
                 <img src="/editar.png" width="20" height="20" alt="Editar" />
               </a>
             )}
@@ -261,9 +290,14 @@ const Group = () => {
         >
           Agregar miembro
         </button>
-
       )}
-
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() =>  navigate('transactions')}
+      >
+        Ver transacciones
+      </button>
       <div className="table-responsive mt-5">
         <table className="table table-striped table-sm">
           <thead>
@@ -292,7 +326,6 @@ const Group = () => {
                       Eliminar participante
                     </button>
                   )}
-
                 </td>
               </tr>
             ))}
@@ -306,7 +339,7 @@ const Group = () => {
         </div>
       )}
 
-      <GenericModal
+      {/*<GenericModal
         showModal={showModal}
         handleClose={closeModal}
         title="Eliminar miembro del grupo"
@@ -315,6 +348,7 @@ const Group = () => {
         confirmAction={() => handleDelete(selectedMember?.username)}
         confirmButtonClass="btn-danger"
       />
+    */}
 
       {/* Modal para asignar gasto */}
       <div
@@ -340,9 +374,20 @@ const Group = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleAddExpense}>
-
+              <div className="mb-3">
+                  <label htmlFor="amount" className="form-label">
+                    De parte de
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="amount"
+                    value={payer}
+                    onChange={(e) => setPayer(e.target.value)}
+                  />
+                </div>
                 <div className="mb-3">
-                  <label htmlFor="receivers" className="form-label">
+                  <label htmlFor="participants" className="form-label">
                     Destinatarios
                   </label>
                   <div>
@@ -353,10 +398,13 @@ const Group = () => {
                           type="checkbox"
                           value={user.username}
                           id={`checkbox-${index}`}
-                          checked={receivers.includes(user.username)}
+                          checked={participants.includes(user.username)}
                           onChange={() => handleCheckboxChange(user.username)}
                         />
-                        <label className="form-check-label" htmlFor={`checkbox-${index}`}>
+                        <label
+                          className="form-check-label"
+                          htmlFor={`checkbox-${index}`}
+                        >
                           {user.username}
                         </label>
                       </div>
@@ -441,16 +489,13 @@ const Group = () => {
                 >
                   Agregar al grupo
                 </button>
-
               </form>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };
 
 export default Group;
-

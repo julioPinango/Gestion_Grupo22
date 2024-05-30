@@ -43,6 +43,11 @@ function Dashboard() {
       </div>
       <body className="container mt-5">
         <h2 className="body text-center">Welcome to BillBuddy</h2>
+        <div className="d-flex justify-content-end mt-5">
+            <a href="/transactions" class="btn btn-primary">
+              Ver mis transacciones
+            </a>
+          </div>
         <h3 className="body text-center mt-5">Mis grupos</h3>
 
         <div class="container text-left">

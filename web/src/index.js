@@ -10,10 +10,25 @@ import CreateGroup from "./routes/CreateGroup";
 import EditGroup from "./routes/EditGroup";
 import Group from "./routes/Group";
 import reportWebVitals from "./reportWebVitals";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 import UserList from "./components/UsersList";
-import AddExpense from "./routes/AddExpense";
 import Transactions from "./routes/Transactions";
+import MyTransactions from "./routes/MyTransactions";
+
+const getAccessToken = () =>{
+  return localStorage.getItem('jwt-token')
+}
+
+const isAuthenticated = () => {
+  return !!getAccessToken();
+}
+
+const ProtectedRoute = ({isAuthenticated}) => {
+  if(!isAuthenticated){
+    return <Navigate to="/" replace/>
+  }
+  return <Outlet/>
+}
 
 const router = createBrowserRouter([
   {
@@ -29,32 +44,37 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/groups",
-    element: <Dashboard />,
-  },
-  {
-    path: "/group/create",
-    element: <CreateGroup />,
-  },
-  {
-    path: "/groups/:id/edit",
-    element: <EditGroup />,
-  },
-  {
-    path: "/groups/add/:id",
-    element: <UserList />,
-  },
-  {
-    path: "/groups/:id",
-    element: <Group />,
-  },
-  {
-    path: "/groups/:id/add-expense",
-    element: <AddExpense />,
-  },
-  {
-    path: "/groups/:id/transactions",
-    element: <Transactions />,
+    element: <ProtectedRoute isAuthenticated={isAuthenticated()} />,
+    children:[
+      {
+        path: "/groups",
+        element: <Dashboard />,
+      },
+      {
+        path: "/group/create",
+        element: <CreateGroup />,
+      },
+      {
+        path: "/groups/:id/edit",
+        element: <EditGroup />,
+      },
+      {
+        path: "/groups/add/:id",
+        element: <UserList />,
+      },
+      {
+        path: "/groups/:id",
+        element: <Group />,
+      },
+      {
+        path: "/groups/:id/transactions",
+        element: <Transactions />,
+      },
+      {
+        path: "/transactions",
+        element: <MyTransactions />,
+      }
+    ]
   }
 ]);
 

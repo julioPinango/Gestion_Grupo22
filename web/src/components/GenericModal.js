@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Button from "../components/Button";
-import "./Home.css";
+import "../routes/Home.css";
 import { useParams } from "react-router-dom";
 
-function AddExpense() {
+function GenericModal() {
   const [amount, setAmount] = useState(0);
   const [receivers, setReceivers] = useState([]);
   const params = useParams();
@@ -106,4 +106,4 @@ function AddExpense() {
   );
 }
 
-export default AddExpense;
+export default GenericModal;
