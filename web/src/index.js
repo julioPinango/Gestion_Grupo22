@@ -13,7 +13,7 @@ import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 import UserList from "./components/UsersList";
 import Transactions from "./routes/Transactions";
-
+import MyTransactions from "./routes/MyTransactions";
 
 const getAccessToken = () =>{
   return localStorage.getItem('jwt-token')
@@ -71,8 +71,8 @@ const router = createBrowserRouter([
         element: <Transactions />,
       },
       {
-        path: "/:username/transactions",
-        element: <Transactions />,
+        path: "/transactions",
+        element: <MyTransactions />,
       }
     ]
   }
