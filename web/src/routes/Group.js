@@ -17,6 +17,7 @@ const Group = () => {
   const [amount, setAmount] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [description, setDescription] = useState("");
+  const [recurrence, setRecurrence] = useState("");
   const [payer, setPayer] = useState("");
   const params = useParams();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -134,7 +135,7 @@ const Group = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ payer, amount, participants, description }),
+          body: JSON.stringify({ payer, amount, participants, description, recurrence }),
         }
       );
 
@@ -147,6 +148,7 @@ const Group = () => {
       setAmount(0);
       setParticipants([]);
       setDescription("");
+      setRecurrence("");
       fetchGroup();
     } catch (error) {
       console.error("Failed to add expense:", error.message);
@@ -295,7 +297,7 @@ const Group = () => {
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() =>  navigate('transactions')}
+        onClick={() => navigate('transactions')}
       >
         Ver transacciones
       </button>
@@ -311,7 +313,7 @@ const Group = () => {
             </tr>
           </thead>
           <tbody>
-            {users ?  users.map((user1, index) => (
+            {users ? users.map((user1, index) => (
               <tr key={index}>
                 <th scope="row">{index}</th>
                 <td>{user1.name}</td>
@@ -322,25 +324,25 @@ const Group = () => {
                     <button
                       type="button"
                       className="btn btn-danger"
-                      onClick={()=>handleDelete(user1.username)}
+                      onClick={() => handleDelete(user1.username)}
                     >
                       Eliminar participante
                     </button>
                   )}
                 </td>
               </tr>
-            )): null }
+            )) : null}
           </tbody>
         </table>
       </div>
-     
+
       {showAlert && (
         <div className={`alert ${selectedMember ? 'alert-danger' : 'alert-success'}`} role="alert">
-    {alertMessage}
-  </div>
+          {alertMessage}
+        </div>
       )}
 
-       {/*
+      {/*
       <GenericModal
         showModal={showModal}
         handleClose={closeModal}
@@ -376,7 +378,7 @@ const Group = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleAddExpense}>
-              <div className="mb-3">
+                <div className="mb-3">
                   <label htmlFor="amount" className="form-label">
                     De parte de
                   </label>
@@ -410,7 +412,7 @@ const Group = () => {
                           {user.username}
                         </label>
                       </div>
-                    )): null}
+                    )) : null}
                   </div>
                 </div>
                 <div className="mb-3">
@@ -436,6 +438,52 @@ const Group = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="recurrence" className="form-label">
+                    Recurrencia
+                  </label>
+                  <div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="recurrence-once"
+                        value="once"
+                        checked={recurrence === "Única vez"}
+                        onChange={() => setRecurrence("Única vez")}
+                      />
+                      <label className="form-check-label" htmlFor="recurrence-once">
+                        Única vez
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="recurrence-weekly"
+                        value="weekly"
+                        checked={recurrence === "Semanal"}
+                        onChange={() => setRecurrence("Semanal")}
+                      />
+                      <label className="form-check-label" htmlFor="recurrence-weekly">
+                        Semanal
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="recurrence-monthly"
+                        value="monthly"
+                        checked={recurrence === "Mensual"}
+                        onChange={() => setRecurrence("Mensual")}
+                      />
+                      <label className="form-check-label" htmlFor="recurrence-monthly">
+                        Mensual
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 <button type="submit" className="btn btn-primary">
                   Agregar
