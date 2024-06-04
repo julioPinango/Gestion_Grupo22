@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import "../routes/Home.css";
 
 const Header = () => {
   const handleLogout = () => {
@@ -12,7 +13,7 @@ const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="bg-dark text-light py-3">
+    <header className="header bg-dark text-light py-3">
       <div className="container">
         <div className="d-flex justify-content-between align-items-center">
           <h1 className="m-0">
@@ -46,23 +47,34 @@ const Header = () => {
               >
                 Deudas
               </Link>
-              <div>
-
               <Link
                 to="/"
                 onClick={handleLogout}
-                className={`nav-item nav-link ${
-                  location.pathname === "/" ? "active" : ""
-                }`}
-                >
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  style={{ color: "white" }}
-                  />
+                className="nav-item nav-link"
+              >
+                <FontAwesomeIcon icon={faArrowRight} style={{ color: "white" }} />
               </Link>
-                  </div>
             </nav>
-          ) : null}
+          ) : (
+            <nav className="nav nav-pills">
+              <Link
+                to="/login"
+                className={`nav-item nav-link ${
+                  location.pathname === "/login" ? "active" : ""
+                }`}
+              >
+                Ingresar
+              </Link>
+              <Link
+                to="/register"
+                className={`nav-item nav-link ${
+                  location.pathname === "/register" ? "active" : ""
+                }`}
+              >
+                Registrarme
+              </Link>
+            </nav>
+          )}
         </div>
       </div>
     </header>
@@ -70,3 +82,4 @@ const Header = () => {
 };
 
 export default Header;
+

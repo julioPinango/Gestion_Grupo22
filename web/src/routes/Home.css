@@ -1,13 +1,52 @@
+/* Home.css */
+
 .Home {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+.main-content {
+  flex-grow: 1;
+}
+
+/* Estilos adicionales para los botones en el header */
+.login-link:hover, .register-link:hover {
+  background-color: lightblue;
+}
+
+/* Estilos adicionales para las imágenes del carrusel */
+.custom-carousel img {
+  width: 100%;
+  height: auto;
+}
+
 .header {
   background-color: #00a200;
   padding: 20px;
+  color: white;
+  text-align: center;
 }
+
+/* Carousel.css */
+.custom-carousel {
+  max-width: 600px; /* Cambia este valor según sea necesario */
+  margin: 0 auto; /* Centra el carrusel horizontalmente */
+}
+
+/* Home.css */
+
+.custom-carousel img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+.custom-carousel .carousel-item img {
+  max-height: 400px; /* Cambia este valor según sea necesario */
+  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+}
+
 
 .body {
   text-align: center;
@@ -17,11 +56,25 @@
   margin: 0;
 }
 
-.footer {
-  background-color: darkgrey;
-  padding: 20px;
-  margin-top: auto;
-  text-align: center;
-  color:lightgrey;
-} 
+/* Home.css */
+
+.btn:hover {
+  background-color: lightblue !important; /* Cambia el color de fondo al pasar el mouse sobre el botón */
+}
+
+.btn:hover + #container {
+  background-color: lightblue; /* Cambia el color del contenedor cuando se pasa el mouse sobre el botón */
+}
+
+/* Estilos CSS adicionales para el componente Header */
+
+.login-link:hover {
+  background-color: lightblue;
+}
+
+.register-link:hover {
+  background-color: lightblue;
+}
+
+
 
