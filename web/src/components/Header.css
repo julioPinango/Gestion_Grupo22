@@ -1,0 +1,86 @@
+/* Header.css */
+
+.header .container {
+    max-width: 1200px; /* Ajusta esto según tus necesidades */
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .header .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header .logo {
+    max-height: 50px; /* Ajusta según sea necesario */
+  }
+  
+  .header .nombre-img {
+    max-height: 50px; /* Ajusta según sea necesario */
+    margin-left: 10px; /* Espacio entre logo y nombre */
+  }
+  
+  .nav {
+    margin-left: auto; /* Asegura que la navegación esté alineada a la derecha */
+  }
+  
+  .nav-pills .nav-link {
+    color: white;
+  }
+  
+  .nav-pills .nav-link.active {
+    background-color: #0d6efd;
+  }
+  
+  .toggle-dark-mode-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  /* Light Mode */
+  .light-mode .header {
+    background-color: #f0f0f0; /* Gris casi blanco */
+    color: #333333; /* Gris oscuro */
+  }
+  
+  .light-mode .nav-pills .nav-link {
+    color: #333333; /* Gris oscuro */
+  }
+  
+  .light-mode .nav-pills .nav-link.active {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+  }
+  
+  .light-mode .toggle-dark-mode-btn {
+    color: #333333; /* Gris oscuro */
+  }
+  
+  /* Dark Mode */
+  .dark-mode .header {
+    background-color: #000000; /* Negro */
+    color: #ffffff; /* Blanco */
+  }
+  
+  .dark-mode .nav-pills .nav-link {
+    color: #ffffff; /* Blanco */
+  }
+  
+  .dark-mode .nav-pills .nav-link.active {
+    background-color: #0d6efd; /* Azul */
+    color: white;
+  }
+  
+  .dark-mode .toggle-dark-mode-btn {
+    color: #ffffff; /* Blanco */
+  }
+  
+  
+  

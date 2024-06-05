@@ -1,13 +1,40 @@
 /* Home.css */
 
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  text-align: center;
+}
+
+.light-mode {
+  background-color: #f0f0f0; /* Gris casi blanco */
+  color: #333333; /* Gris oscuro */
+}
+
+.dark-mode {
+  background-color: #000000; /* Negro */
+  color: #ffffff; /* Blanco */
+}
+
+.carousel-caption {
+  color: inherit;
+}
+
+/* Ajustes adicionales para otros elementos */
+.light-mode .carousel-control-prev-icon,
+.light-mode .carousel-control-next-icon {
+  filter: invert(0%);
+}
+
+.dark-mode .carousel-control-prev-icon,
+.dark-mode .carousel-control-next-icon {
+  filter: invert(100%);
+}
+
+/* Existing Home.css styles */
 .Home {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-.main-content {
-  flex-grow: 1;
 }
 
 /* Estilos adicionales para los botones en el header */
@@ -21,42 +48,22 @@
   height: auto;
 }
 
-.header {
-  background-color: #00a200;
-  padding: 20px;
-  color: white;
-  text-align: center;
-}
-
 /* Carousel.css */
 .custom-carousel {
-  max-width: 600px; /* Cambia este valor según sea necesario */
+  max-width: 1000px; /* Cambia este valor según sea necesario */
   margin: 0 auto; /* Centra el carrusel horizontalmente */
 }
-
-/* Home.css */
 
 .custom-carousel img {
   max-width: 100%;
   height: auto;
 }
 
-
 .custom-carousel .carousel-item img {
-  max-height: 400px; /* Cambia este valor según sea necesario */
+  max-height: 1000px; /* Cambia este valor según sea necesario */
   object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
 }
 
-
-.body {
-  text-align: center;
-}
-
-.title {
-  margin: 0;
-}
-
-/* Home.css */
 
 .btn:hover {
   background-color: lightblue !important; /* Cambia el color de fondo al pasar el mouse sobre el botón */

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import "./Register.css"; // Asegúrate de tener los estilos adecuados en este archivo
+import "./Register.css"; 
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -13,6 +13,15 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "light-mode";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const capitalizeFirstLetter = (word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -56,9 +65,13 @@ export default function Register() {
     await createUser();
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="Register d-flex flex-column min-vh-100">
-      <Header href='/' />
+    <div className={`Register d-flex flex-column min-vh-100 ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
       <div className="flex-grow-1 d-flex align-items-center justify-content-center">
         <form className="form" onSubmit={handleRegister}>
           <h1>Registro</h1>

@@ -5,7 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const Footer = () => {
   return (
-    <footer className="footer bg-dark text-light py-3">
+    <footer className="footer">
       <div className="container text-center">
         <p>BillBuddy 2024</p>
       </div>
@@ -14,4 +14,6 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
 

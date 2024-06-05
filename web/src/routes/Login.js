@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../components/Button";
-import "./Login.css"; // Asegúrate de tener los estilos adecuados en este archivo
+import "./Login.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "light-mode";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,9 +44,13 @@ export default function Login() {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="Login d-flex flex-column min-vh-100">
-      <Header />
+    <div className={`Login d-flex flex-column min-vh-100 ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
       <div className="flex-grow-1 d-flex align-items-center justify-content-center">
         <form className="form" onSubmit={handleLogin}>
           <h1>Ingreso</h1>

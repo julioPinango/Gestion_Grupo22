@@ -1,10 +1,20 @@
 /* Footer.css */
 
 .footer {
-    background-color: darkgrey;
-    padding: 5px;
-    text-align: center;
-    color: lightgrey;
-    width: 100%;
-  }
-  
+  background-color: darkgrey;
+  padding: 5px;
+  text-align: center;
+  color: lightgrey;
+  width: 100%;
+}
+
+.light-mode .footer {
+  background-color: #f0f0f0; /* Gris casi blanco */
+  color: #333333; /* Gris oscuro */
+}
+
+.dark-mode .footer {
+  background-color: #000000; /* Negro */
+  color: #ffffff; /* Blanco */
+}
+

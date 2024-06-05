@@ -2,9 +2,12 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import "../routes/Home.css";
+import "./Header.css";
+import lightmodenombre from "../img/lightmodenombre.png";
+import darkmodeNombre from "../img/darkmodenombre.png";
+import logo from "../img/LogoBillbuddy.png";
 
-const Header = () => {
+const Header = ({ toggleDarkMode, darkMode }) => {
   const handleLogout = () => {
     localStorage.removeItem("jwt-token");
   };
@@ -13,37 +16,32 @@ const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="header bg-dark text-light py-3">
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center">
-          <h1 className="m-0">
-            <Link to="/" className="text-light text-decoration-none">
-              BillBuddy
-            </Link>
-          </h1>
+    <header className="header py-3">
+      <div className="container d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center">
+          <Link to="/" className="text-light text-decoration-none logo-container d-flex align-items-center">
+            <img src={logo} alt="Logo" className="logo" />
+            <img src={darkMode ? darkmodeNombre : lightmodenombre} alt="Nombre del Proyecto" className="nombre-img ml-2" />
+          </Link>
+        </div>
+        <nav className="nav nav-pills ml-auto d-flex align-items-center">
           {token ? (
-            <nav className="nav nav-pills">
+            <>
               <Link
                 to="/groups"
-                className={`nav-item nav-link ${
-                  location.pathname === "/groups" ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/groups" ? "active" : ""}`}
               >
                 Grupos
               </Link>
               <Link
                 to="/transactions"
-                className={`nav-item nav-link ${
-                  location.pathname === "/transactions" ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/transactions" ? "active" : ""}`}
               >
                 Transacciones
               </Link>
               <Link
                 to="/deudas"
-                className={`nav-item nav-link ${
-                  location.pathname === "/deudas" ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/deudas" ? "active" : ""}`}
               >
                 Deudas
               </Link>
@@ -54,32 +52,33 @@ const Header = () => {
               >
                 <FontAwesomeIcon icon={faArrowRight} style={{ color: "white" }} />
               </Link>
-            </nav>
+            </>
           ) : (
-            <nav className="nav nav-pills">
+            <>
               <Link
                 to="/login"
-                className={`nav-item nav-link ${
-                  location.pathname === "/login" ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/login" ? "active" : ""}`}
               >
                 Ingresar
               </Link>
               <Link
                 to="/register"
-                className={`nav-item nav-link ${
-                  location.pathname === "/register" ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/register" ? "active" : ""}`}
               >
                 Registrarme
               </Link>
-            </nav>
+            </>
           )}
-        </div>
+          <button onClick={toggleDarkMode} className="toggle-dark-mode-btn">
+            {darkMode ? "Light Mode 🌞" : "Dark Mode 🌙"}
+          </button>
+        </nav>
       </div>
     </header>
   );
 };
 
 export default Header;
+
+
 
