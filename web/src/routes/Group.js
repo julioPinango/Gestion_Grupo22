@@ -4,12 +4,15 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { decodeToken } from "react-jwt";
 import GenericModal from "../components/GenericModal";
+import Calendar from "react-calendar"; 
+import { Link, useLocation } from "react-router-dom";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
   const [usuarioAAgregar, setUsuarioAAgregar] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -24,8 +27,15 @@ const Group = () => {
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
+  const toggleCalendar = () => {
+    setCalendarVisible(!calendarVisible);
+  };
   useEffect(() => {
+    const currentDate = new Date();
+    setSelectedDate(currentDate);
     fetchGroup();
   }, [params.id]);
 
@@ -47,6 +57,11 @@ const Group = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+  };
+
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
   };
 
   const handleDelete = async (username) => {
@@ -84,7 +99,26 @@ const Group = () => {
       //alert("No se pudo eliminar el participante: " + error.message);
     }
   };
-
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+  
+    // Agregar un 0 al mes si es menor que 10
+    if (month < 10) {
+      month = '0' + month;
+    }
+  
+    // Agregar un 0 al día si es menor que 10
+    if (day < 10) {
+      day = '0' + day;
+    }
+  
+    return `${year}-${month}-${day}`;
+  };
+  const [date, setDate] = useState(getCurrentDate());
+  
   const addMember = async (member) => {
     try {
       const response = await fetch(
@@ -127,6 +161,17 @@ const Group = () => {
     e.preventDefault();
 
     try {
+      console.log("Dia formateado:", selectedDate);
+      let newDate = new Date(selectedDate); // Clonar la fecha seleccionada
+      if (recurrence === "Semanal") {
+        newDate.setDate(newDate.getDate() + 7); // Incrementar la fecha en una semana
+      } else if (recurrence === "Mensual") {
+        newDate.setMonth(newDate.getMonth() + 1); // Incrementar la fecha en un mes
+      }
+  
+      const formattedDate = newDate.toISOString(); // Formatear la nueva fecha
+      console.log("Dia formateado:", formattedDate);
+  
       const response = await fetch(
         `http://localhost:3001/groups/${params.id}/transactions`,
         {
@@ -135,7 +180,7 @@ const Group = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ payer, amount, participants, description, recurrence }),
+          body: JSON.stringify({ payer, amount, participants, description, recurrence, selectedDate: formattedDate }),
         }
       );
 
@@ -261,21 +306,18 @@ const Group = () => {
       </div>
 
       <div className="container mt-5">
-        <h2>{groupName}</h2>
-        <p>
-          <span>
-            {groupDescription}
-            {isAdmin && (
-              <a
-                href={`/groups/${params.id}/edit`}
-                style={{ padding: "0 10px" }}
-              >
-                <img src="/editar.png" width="20" height="20" alt="Editar" />
-              </a>
-            )}
-          </span>
-        </p>
-      </div>
+      <h2>{groupName}</h2>
+      <p>
+        <span>
+          {groupDescription}
+          {isAdmin && (
+            <Link to={`/groups/${params.id}/edit`} style={{ padding: "0 10px" }}>
+              <img src="/editar.png" width="20" height="20" alt="Editar" />
+            </Link>
+          )}
+        </span>
+      </p>
+    </div>
 
       <button
         type="button"
@@ -439,6 +481,23 @@ const Group = () => {
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
                 </div>
+                <div className="mb-3">
+      <label htmlFor="selectedDate" className="form-label">
+        {calendarVisible ? formatDate(selectedDate) : "Seleccionar fecha"}
+      </label>
+      <div>
+        <button type="button" onClick={toggleCalendar}>
+          {calendarVisible ? "Ocultar calendario" : formatDate(selectedDate)}
+        </button>
+        {calendarVisible && (
+          <Calendar
+            id="selectedDate"
+            onChange={setSelectedDate}
+            value={selectedDate}
+          />
+        )}
+      </div>
+    </div>
                 <div className="mb-3">
                   <label htmlFor="recurrence" className="form-label">
                     Recurrencia

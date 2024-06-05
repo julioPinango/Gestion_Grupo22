@@ -8,26 +8,25 @@ import "./Home.css";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-function EditGroup() {
+function EditTransaction() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const params = useParams();
-
+console.log(params);
   const navigate = useNavigate(); // useNavigate hook from react-router-dom
   const token = localStorage.getItem("jwt-token");
 
-  const editGroup = async () => {
+  const editTransaction = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/groups/${params.id}`,
+        `http://localhost:3001/groups/${params.id}/transactions/${params.transaction_id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token, // Use Bearer token
+            Authorization: localStorage.getItem("jwt-token"),
           },
           body: JSON.stringify({
-            name,
             description,
           }),
         }
@@ -40,24 +39,23 @@ function EditGroup() {
       }
 
       console.log(data);
-      //const groupId = data.groupId; //
-
-      // Redirect to the group page
-      navigate(`/groups/${params.id}`);
+      // Actualizar la lista de transacciones después de editar
     } catch (error) {
-      console.error("Error editando el grupo:", error.message);
-      alert("No se pudo editar el grupo: " + error.message);
+      
+      console.error("Error editando la transacción:", error.message);
+      alert("No se pudo editar la transacción: " + error.message);
     }
   };
 
-  const handleEditGroup = async (e) => {
-    if (name === "" || description === "") {
+
+  const handleEditTransaction = async (e) => {
+    if (description === "") {
       alert("Campos incompletos");
       return;
     }
 
     e.preventDefault();
-    await editGroup();
+    await editTransaction();
   };
 
   return (
@@ -66,15 +64,10 @@ function EditGroup() {
         <Header href={`/groups/${params.id}`} />
       </div>
       <body>
-        <form className="form" onSubmit={handleEditGroup}>
-          <h1>Editar Grupo</h1>
+        <form className="form" onSubmit={handleEditTransaction}>
+          <h1>Editar Transacción</h1>
 
-          <label htmlFor="">Nuevo nombre</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          
 
           <label htmlFor="">Nueva descripción</label>
           <input
@@ -107,4 +100,4 @@ function EditGroup() {
   );
 }
 
-export default EditGroup;
+export default EditTransaction;

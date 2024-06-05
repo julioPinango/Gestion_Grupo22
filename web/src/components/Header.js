@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { faArrowRight, faCalendarDays } from "@fortawesome/free-solid-svg-icons"; // Importar faCalendarDays
 import { faArrowRight, faBell } from "@fortawesome/free-solid-svg-icons";
+
 
 const Header = () => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -55,6 +58,18 @@ const Header = () => {
           {token ? (
             <nav className="nav nav-pills">
 
+              <div>
+                <Link
+                  to="/recordatorios"
+                className={`nav-item nav-link ${
+                  location.pathname === "/recordatorios" ? "active" : ""
+                }`}
+                >
+                  <FontAwesomeIcon icon={faCalendarDays} /> {/* Utilizar el icono del calendario */}
+                </Link>
+              </div>
+
+
               <div className="container"></div>
                 <div>
                   <Link
@@ -97,7 +112,6 @@ const Header = () => {
                   )}
                 </div>
 
-
               <Link
                 to="/groups"
                 className={`nav-item nav-link ${
@@ -123,20 +137,19 @@ const Header = () => {
                 Deudas
               </Link>
               <div>
-
-              <Link
-                to="/"
-                onClick={handleLogout}
-                className={`nav-item nav-link ${
-                  location.pathname === "/" ? "active" : ""
-                }`}
+                <Link
+                  to="/"
+                  onClick={handleLogout}
+                  className={`nav-item nav-link ${
+                    location.pathname === "/" ? "active" : ""
+                  }`}
                 >
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  style={{ color: "white" }}
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    style={{ color: "white" }}
                   />
-              </Link>
-                  </div>
+                </Link>
+              </div>
             </nav>
           ) : null}
         </div>

@@ -16,10 +16,11 @@ create-members:
 	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS members (group_id INT, username VARCHAR(100), balance FLOAT, PRIMARY KEY (group_id, username), FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (username) REFERENCES users(username));"
 
 create-transactions:
-	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS transactions (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400),recurrence VARCHAR(20) CHECK (recurrence IN ('Única vez', 'Mensual', 'Semanal', 'Diario')), invoice BYTEA, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
+	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS transactions (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400),recurrence VARCHAR(20) CHECK (recurrence IN ('Única vez', 'Mensual', 'Semanal', 'Diario')), invoice BYTEA, selectedDate DATE, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
+
 
 create-notifications:
-	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400), recurrence VARCHAR(20), timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
+	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400), recurrence VARCHAR(20), selectedDate DATE, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
 
 create-tables: create-users create-groups create-members create-transactions create-notifications
 	
