@@ -10,7 +10,7 @@ const { createUser, login, getUsers, getUser } = require("./controllers/userCont
 const { createGroup, getGroups, getGroup, getAdmin, updateGroup } = require("./controllers/groupControllers/groupControllers");
 const { getMembers, addMember, deleteMember } = require("./controllers/memberControllers/memberControllers");
 const { getBalances } = require("./controllers/balanceControllers/balanceControllers");
-const { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions } = require("./controllers/transactionControllers/transactionControllers");
+const { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions, updateTransaction } = require("./controllers/transactionControllers/transactionControllers");
 const { getNotifications } = require("./controllers/notificationControllers/notificationControllers");
 const { authenticateToken } = require("./authMiddleware/middleware");
 
@@ -40,6 +40,7 @@ app.get("/transactions/", authenticateToken, getTransactionsByUser);
 app.get("/mytransactions/", authenticateToken, getMyTransactions);
 app.get("/groups/:group_id/transactions", authenticateToken, getTransactions);
 app.post("/groups/:group_id/transactions", authenticateToken, addTransaction);
+app.patch("/groups/:group_id/transactions/:transaction_id", authenticateToken, updateTransaction);
 
 //Notifications Queries
 app.get("/notifications/", authenticateToken, getNotifications);
