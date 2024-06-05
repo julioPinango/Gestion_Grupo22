@@ -57,7 +57,7 @@ const _addTransaction = async (groupId, from, to, amount, description, recurrenc
 
         await updateBalances(amount, groupId, from)
         await updateBalances(-amount, groupId, to)
-        await pushNotification(groupId, from, amount, description, recurrence)
+        await pushNotification(groupId, from, to, amount, description, recurrence)
     } catch (error) {
         console.error("Error al obtener los datos:", error);
     }

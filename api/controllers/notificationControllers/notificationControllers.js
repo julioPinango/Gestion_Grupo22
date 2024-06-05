@@ -8,13 +8,13 @@ const getNotifications = async (req, res) => {
             text: `
             SELECT *
             FROM notifications
-            WHERE username = $1`,
+            WHERE to_username = $1`,
             values: [username]
         };
 
         result = await client.query(query);
 
-        await client.query('DELETE FROM notifications WHERE username = $1', [username]);
+        await client.query('DELETE FROM notifications WHERE to_username = $1', [username]);
 
         res.json({ Notifications: result.rows });
     } catch (error) {
@@ -23,11 +23,11 @@ const getNotifications = async (req, res) => {
     }
 };
 
-const pushNotification = async (groupId, from, amount, description, recurrence) => {
+const pushNotification = async (groupId, from, to, amount, description, recurrence) => {
     try {
         const query = {
-            text: `INSERT INTO notifications (group_id, from_username, amount, description, recurrence) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-            values: [groupId, from, amount, description, recurrence]
+            text: `INSERT INTO notifications (group_id, from_username, to_username, amount, description, recurrence) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+            values: [groupId, from, to, amount, description, recurrence]
         };
         result = await client.query(query);
     } catch (error) {
