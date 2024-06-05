@@ -12,6 +12,7 @@ const addTransaction = async (req, res) => {
         const payer = req.body.payer;
         const description = req.body.description;
         const recurrence = req.body.recurrence;
+        const invoice = req.body.invoice;
 
         if (!await isMember(groupId, username)) {
             console.error("Error at adding transaction: Not a member.");
@@ -36,7 +37,7 @@ const addTransaction = async (req, res) => {
             if (payer == participants[i]) {
                 continue
             }
-            await _addTransaction(groupId, payer, participants[i], amount / participants.length, description, recurrence)
+            await _addTransaction(groupId, payer, participants[i], amount / participants.length, description, recurrence, invoice)
         }
 
         res.status(200).json({ message: 'Transaction added' });
@@ -46,12 +47,12 @@ const addTransaction = async (req, res) => {
     }
 };
 
-const _addTransaction = async (groupId, from, to, amount, description, recurrence) => { //TODO: handle errors
+const _addTransaction = async (groupId, from, to, amount, description, recurrence, invoice) => { //TODO: handle errors
     try {
 
         const query = {
-            text: `INSERT INTO transactions (group_id, from_username, to_username, amount, description, recurrence) VALUES ($1,$2,$3,$4,$5,$6)`,
-            values: [groupId, from, to, amount, description, recurrence]
+            text: `INSERT INTO transactions (group_id, from_username, to_username, amount, description, recurrence, invoice) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+            values: [groupId, from, to, amount, description, recurrence, invoice]
         };
         await client.query(query);
 

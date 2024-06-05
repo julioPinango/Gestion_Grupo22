@@ -106,7 +106,8 @@ A website that helps people keep track of shared expenses and split bills with f
   "amount": 100,
   "participants": ["avilagaston", "avilagaston2"],
   "payer": "avilagaston",
-  "description": "Bus tickets"
+  "description": "Bus tickets",
+  "invoices": binary
 }
 ```
 
