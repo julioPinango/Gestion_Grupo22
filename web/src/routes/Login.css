@@ -41,13 +41,13 @@
 }
 
 .light-mode .Login {
-  background-image: url('../img/lightmodefondo.jpg'); /* Ruta de la imagen de fondo para modo claro */
+  background-image: url('../img/lightmodefondo1.jpg'); /* Ruta de la imagen de fondo para modo claro */
   background-size: cover;
   background-attachment: fixed;
 }
 
 .dark-mode .Login {
-  background-image: url('../img/darkmodefondo.jpg'); /* Ruta de la imagen de fondo para modo oscuro */
+  background-image: url('../img/darkmodefondo1.jpg'); /* Ruta de la imagen de fondo para modo oscuro */
   background-size: cover;
   background-attachment: fixed;
 }

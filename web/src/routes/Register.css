@@ -27,13 +27,13 @@
 }
 
 .light-mode .Register {
-  background-image: url('../img/lightmodefondo.jpg');
+  background-image: url('../img/lightmodefondo1.jpg');
   background-size: cover;
   background-attachment: fixed;
 }
 
 .dark-mode .Register {
-  background-image: url('../img/darkmodefondo.jpg');
+  background-image: url('../img/darkmodefondo1.jpg');
   background-size: cover;
   background-attachment: fixed;
 }
