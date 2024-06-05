@@ -1,6 +1,7 @@
 const { client } = require('../../utils/constants');
 const { updateBalances } = require('../balanceControllers/balanceControllers');
 const { isMember } = require("../memberControllers/memberControllers");
+const { pushNotification } = require('../notificationControllers/notificationControllers');
 
 const addTransaction = async (req, res) => {
     try {
@@ -56,6 +57,7 @@ const _addTransaction = async (groupId, from, to, amount, description, recurrenc
 
         await updateBalances(amount, groupId, from)
         await updateBalances(-amount, groupId, to)
+        await pushNotification(groupId, from, to, amount, description, recurrence)
     } catch (error) {
         console.error("Error al obtener los datos:", error);
     }
