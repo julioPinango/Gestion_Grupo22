@@ -38,6 +38,7 @@ const addTransaction = async (req, res) => {
         for (let i = 0; i < participants.length; i++) { // TODO: handle errors
             if (payer == participants[i]) {
                 continue
+                }
             
             await _addTransaction(groupId, payer, participants[i], amount / participants.length, description, recurrence, invoice, selecteddate)
         }
