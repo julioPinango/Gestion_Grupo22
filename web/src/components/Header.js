@@ -2,8 +2,8 @@ import React, {useState, useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { faArrowRight, faCalendarDays } from "@fortawesome/free-solid-svg-icons"; // Importar faCalendarDays
-import { faArrowRight, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCalendarDays,faUser } from "@fortawesome/free-solid-svg-icons"; // Importar faCalendarDays
+import {  faBell } from "@fortawesome/free-solid-svg-icons";
 
 
 const Header = () => {
@@ -57,7 +57,16 @@ const Header = () => {
           </h1>
           {token ? (
             <nav className="nav nav-pills">
-
+              <div>
+                <Link
+                  to="/profile"
+                className={`nav-item nav-link ${
+                  location.pathname === "/profile" ? "active" : ""
+                }`}
+                >
+                  <FontAwesomeIcon icon={faUser} /> {/* Utilizar el icono del calendario */}
+                </Link>
+              </div>
               <div>
                 <Link
                   to="/recordatorios"
