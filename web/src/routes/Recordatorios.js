@@ -31,6 +31,7 @@ const Recordatorios = () => {
         }
 
         const data = await response.json();
+        console.log(data.Transactions);
         const sortedTransactions = data.Transactions.sort((a, b) => new Date(a.selecteddate) - new Date(b.selecteddate));
         const today = new Date().toISOString().split('T')[0]; // Obtenemos la fecha actual en formato YYYY-MM-DD
         const filteredTransactions = sortedTransactions.filter(transaction => transaction.selecteddate.split('T')[0] >= today); // Filtrar transacciones con fecha igual o posterior a hoy
@@ -38,6 +39,7 @@ const Recordatorios = () => {
         setCurrentDate(today);
       } catch (error) {
         console.error("Error fetching transactions:", error);
+        
       }
     };
 

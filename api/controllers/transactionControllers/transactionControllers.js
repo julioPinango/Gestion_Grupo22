@@ -150,7 +150,7 @@ const updateTransaction = async (req, res) => {
 
         const { description } = req.body;
 
-        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1 AND from_username = $2', [transactionId, username]);
+        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1 AND from_username = $2 OR to_username = $2', [transactionId, username]);
         if (existingTransaction.rows.length === 0) {
             console.error('Error in update: transaction not found');
             return res.status(404).json({ message: 'Transaction not found' });
