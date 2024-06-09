@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { decodeToken } from "react-jwt";
-import GenericModal from "../components/GenericModal";
+import "./Group.css";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
@@ -24,6 +23,15 @@ const Group = () => {
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "light-mode";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   useEffect(() => {
     fetchGroup();
@@ -71,17 +79,13 @@ const Group = () => {
       );
       setShowModal(false);
 
-      // Mostrar la alerta
-      setAlertMessage(
-        `El usuario "${username}" ha sido eliminado del grupo con éxito!`
-      );
+      setAlertMessage(`El usuario "${username}" ha sido eliminado del grupo con éxito!`);
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
     } catch (error) {
       console.error("Error eliminando el participante:", error.message);
-      //alert("No se pudo eliminar el participante: " + error.message);
     }
   };
 
@@ -102,10 +106,8 @@ const Group = () => {
       if (!response.ok) {
         throw new Error("Failed to add member");
       }
-      // Mostrar la alerta
-      setAlertMessage(
-        `El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`
-      );
+
+      setAlertMessage(`El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`);
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -254,12 +256,13 @@ const Group = () => {
     );
   };
 
-  return (
-    <div className="text-center">
-      <div>
-        <Header href="/groups" />
-      </div>
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
+  return (
+    <div className={`Group text-center ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
       <div className="container mt-5">
         <h2>{groupName}</h2>
         <p>
@@ -277,273 +280,217 @@ const Group = () => {
         </p>
       </div>
 
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={openExpenseModal}
-      >
+      <button type="button" className="btn btn-primary" onClick={openExpenseModal}>
         Agregar gasto
       </button>
 
       {isAdmin && (
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={openAddUserModal}
-        >
-          Agregar miembro
+        <button type="button" className="btn btn-primary" onClick={openAddUserModal}>
+          Agregar usuario
         </button>
       )}
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => navigate('transactions')}
-      >
-        Ver transacciones
-      </button>
-      <div className="table table-sm">
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Apellido</th>
-              <th scope="col">Nombre de usuario</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users ? users.map((user1, index) => (
-              <tr key={index}>
-                <th scope="row">{index}</th>
-                <td>{user1.name}</td>
-                <td>{user1.lastname}</td>
-                <td>{user1.username}</td>
-                <td>
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(user1.username)}
-                    >
-                      Eliminar participante
-                    </button>
-                  )}
-                </td>
-              </tr>
-            )) : null}
-          </tbody>
-        </table>
-      </div>
 
-      {showAlert && (
-        <div className={`alert ${selectedMember ? 'alert-danger' : 'alert-success'}`} role="alert">
-          {alertMessage}
+      <ul className="list-group mt-4">
+        {users.length === 0 ? (
+          <li className="list-group-item">Cargando usuarios...</li>
+        ) : (
+          users.map((user, index) => (
+            <li key={index} className="list-group-item">
+              {user.username}
+              {isAdmin && (
+                <button
+                  type="button"
+                  className="btn btn-danger float-right"
+                  onClick={() => openModal(user)}
+                >
+                  Eliminar
+                </button>
+              )}
+            </li>
+          ))
+        )}
+      </ul>
+
+      {showModal && (
+        <div className="modal show">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar eliminación</h5>
+                <button
+                  type="button"
+                  className="close"
+                  aria-label="Close"
+                  onClick={closeModal}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>¿Estás seguro que deseas eliminar a {selectedMember.username}?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeModal}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(selectedMember.username)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/*
-      <GenericModal
-        showModal={showModal}
-        handleClose={closeModal}
-        title="Eliminar miembro del grupo"
-        bodyText={`¿Desea eliminar el miembro "${selectedMember?.username}" del grupo?`}
-        confirmText="Eliminar"
-        confirmAction={() => handleDelete(selectedMember?.username)}
-        confirmButtonClass="btn-danger"
-      />
-    */}
-
-      {/* Modal para asignar gasto */}
-      <div
-        className={`modal fade ${showExpenseModal ? "show" : ""}`}
-        id="expenseModal"
-        tabIndex="-1"
-        aria-labelledby="expenseModalLabel"
-        aria-hidden="true"
-        style={{ display: showExpenseModal ? "block" : "none" }}
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="expenseModalLabel">
-                Agregar gasto
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={closeExpenseModal}
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleAddExpense}>
-                <div className="mb-3">
-                  <label htmlFor="amount" className="form-label">
-                    De parte de
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="amount"
-                    value={payer}
-                    onChange={(e) => setPayer(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="participants" className="form-label">
-                    Destinatarios
-                  </label>
-                  <div>
-                    {users ? users.map((user, index) => (
-                      <div className="form-check" key={index}>
+      {showExpenseModal && (
+        <div className="modal show">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Agregar Gasto</h5>
+                <button
+                  type="button"
+                  className="close"
+                  aria-label="Close"
+                  onClick={closeExpenseModal}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleAddExpense}>
+                  <div className="form-group">
+                    <label htmlFor="amount">Monto:</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="amount"
+                      value={amount}
+                      onChange={(e) => setAmount(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="description">Descripción:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="recurrence">Recurrencia:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="recurrence"
+                      value={recurrence}
+                      onChange={(e) => setRecurrence(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="payer">Pagador:</label>
+                    <select
+                      className="form-control"
+                      id="payer"
+                      value={payer}
+                      onChange={(e) => setPayer(e.target.value)}
+                    >
+                      <option value="">Selecciona un pagador</option>
+                      {users.map((user, index) => (
+                        <option key={index} value={user.username}>
+                          {user.username}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Participantes:</label>
+                    {users.map((user, index) => (
+                      <div key={index} className="form-check">
                         <input
-                          className="form-check-input"
                           type="checkbox"
-                          value={user.username}
-                          id={`checkbox-${index}`}
+                          className="form-check-input"
+                          id={`participant-${index}`}
                           checked={participants.includes(user.username)}
                           onChange={() => handleCheckboxChange(user.username)}
                         />
                         <label
                           className="form-check-label"
-                          htmlFor={`checkbox-${index}`}
+                          htmlFor={`participant-${index}`}
                         >
                           {user.username}
                         </label>
                       </div>
-                    )) : null}
+                    ))}
                   </div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="amount" className="form-label">
-                    Monto
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="description" className="form-label">
-                    Descripción
-                  </label>
-                  <textarea
-                    className="form-control"
-                    id="description"
-                    rows="3"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="recurrence" className="form-label">
-                    Recurrencia
-                  </label>
-                  <div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        id="recurrence-once"
-                        value="once"
-                        checked={recurrence === "Única vez"}
-                        onChange={() => setRecurrence("Única vez")}
-                      />
-                      <label className="form-check-label" htmlFor="recurrence-once">
-                        Única vez
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        id="recurrence-weekly"
-                        value="weekly"
-                        checked={recurrence === "Semanal"}
-                        onChange={() => setRecurrence("Semanal")}
-                      />
-                      <label className="form-check-label" htmlFor="recurrence-weekly">
-                        Semanal
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        id="recurrence-monthly"
-                        value="monthly"
-                        checked={recurrence === "Mensual"}
-                        onChange={() => setRecurrence("Mensual")}
-                      />
-                      <label className="form-check-label" htmlFor="recurrence-monthly">
-                        Mensual
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Agregar
-                </button>
-              </form>
+                  <button type="submit" className="btn btn-primary">
+                    Agregar
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div
-        className={`modal fade ${showAddUserModal ? "show" : ""}`}
-        id="addUserModal"
-        tabIndex="-1"
-        aria-labelledby="addUserModalLabel"
-        aria-hidden={!showAddUserModal}
-        style={{ display: showAddUserModal ? "block" : "none" }}
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="addUserModalLabel">
-                Agregar usuario al grupo
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={closeAddUserModal}
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form className="form" onSubmit={(e) => e.preventDefault()}>
-                <div className="mb-3">
-                  <label htmlFor="add-user" className="form-label">
-                    Usuario a agregar
-                  </label>
-                  <input
-                    type="text"
-                    id="add-user"
-                    className="form-control"
-                    value={usuarioAAgregar}
-                    onChange={(e) => setUsuarioAAgregar(e.target.value)}
-                  />
-                </div>
+      {showAddUserModal && (
+        <div className="modal show">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Agregar Usuario</h5>
                 <button
                   type="button"
-                  className="btn btn-primary"
-                  onClick={() => {
+                  className="close"
+                  aria-label="Close"
+                  onClick={closeAddUserModal}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
                     addMember(usuarioAAgregar);
                     closeAddUserModal();
                   }}
                 >
-                  Agregar al grupo
-                </button>
-              </form>
+                  <div className="form-group">
+                    <label htmlFor="usuarioAAgregar">Nombre de usuario:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="usuarioAAgregar"
+                      value={usuarioAAgregar}
+                      onChange={(e) => setUsuarioAAgregar(e.target.value)}
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Agregar
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {showAlert && (
+        <div className="alert alert-success" role="alert">
+          {alertMessage}
+        </div>
+      )}
     </div>
   );
 };

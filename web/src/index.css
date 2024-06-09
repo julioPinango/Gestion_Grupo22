@@ -14,6 +14,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.light-mode {
+  background-color: #fff;
+  color: #000;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #fff;
+}
+
+.navbar-light {
+  background-color: #f8f9fa;
+}
+
+.navbar-dark {
+  background-color: #343a40;
+}
+
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

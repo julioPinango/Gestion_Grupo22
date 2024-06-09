@@ -1,0 +1,67 @@
+/* MyTransactions.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  .MyTransactions {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container {
+    flex-grow: 1;
+  }
+  
+  header {
+    position: relative;
+  }
+  
+  footer {
+    position: relative;
+    margin-top: auto;
+  }
+  
+  .light-mode {
+    background: url('../img/lightmodefondo1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: black;
+  }
+  
+  .dark-mode {
+    background: url('../img/darkmodefondo1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+  }
+  
+  .table-responsive {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: inherit;
+  }
+  
+  .dark-mode .table-responsive {
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  
+  .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+  }
+  

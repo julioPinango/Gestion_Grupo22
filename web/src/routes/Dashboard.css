@@ -1,0 +1,59 @@
+/* Dashboard.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  .Dashboard {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container {
+    flex-grow: 1;
+  }
+  
+  header {
+    position: relative;
+  }
+  
+  footer {
+    position: relative;
+    margin-top: auto;
+  }
+  
+  .light-mode {
+    background: url('../img/lightmodefondo1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: black;
+  }
+  
+  .dark-mode {
+    background: url('../img/darkmodefondo1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+  }
+  
+  .table {
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+  }
+  
+  .table th, .table td {
+    color: inherit;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+  

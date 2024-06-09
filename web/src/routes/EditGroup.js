@@ -1,22 +1,33 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import UserList from "../components/UsersList";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-import "./Home.css";
-import { useParams } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import "./EditGroup.css";
 
 function EditGroup() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const params = useParams();
-
   const navigate = useNavigate(); // useNavigate hook from react-router-dom
   const token = localStorage.getItem("jwt-token");
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
-  const editGroup = async () => {
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  const handleEditGroup = async (e) => {
+    e.preventDefault();
+    if (name === "" || description === "") {
+      alert("Campos incompletos");
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:3001/groups/${params.id}`, {
         method: "PATCH",
@@ -37,9 +48,6 @@ function EditGroup() {
       }
 
       console.log(data);
-      //const groupId = data.groupId; //
-
-      // Redirect to the group page
       navigate(`/groups/${params.id}`);
     } catch (error) {
       console.error("Error editando el grupo:", error.message);
@@ -47,22 +55,10 @@ function EditGroup() {
     }
   };
 
-  const handleEditGroup = async (e) => {
-    if (name === "" || description === "") {
-      alert("Campos incompletos");
-      return;
-    }
-
-    e.preventDefault();
-    await editGroup();
-  };
-
   return (
-    <div className="Home text-center">
-      <div>
-        <Header href={`/groups/${params.id}`} />
-      </div>
-      <body>
+    <div className={`EditGroup ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="container text-center mt-5">
         <form className="form" onSubmit={handleEditGroup}>
           <h1>Editar Grupo</h1>
 
@@ -73,36 +69,22 @@ function EditGroup() {
             onChange={(e) => setName(e.target.value)}
           />
 
-          <label className="sr-only">Actualizar descripcion</label>
+          <label htmlFor="">Actualizar descripción</label>
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          {/*<label className="sr-only">Usuarios añadidos</label>
-          <input
-            type="text"
-            value={members}
-            onChange={(e) => setMembers(e.target.value.split(","))} // Assuming members are input as comma-separated values
-          />
-
-          <label className="sr-only">Balance</label>
-          <input
-            type="text"
-            value={balance}
-            onChange={(e) => setBalance(e.target.value)}
-          />
-  */}
           <div className="container text-right mt-5 text-center">
             <Button text="Guardar cambios" />
           </div>
-          
         </form>
-      </body>
-      <div></div>
+      </div>
+      <Footer />
     </div>
   );
 }
 
 export default EditGroup;
+

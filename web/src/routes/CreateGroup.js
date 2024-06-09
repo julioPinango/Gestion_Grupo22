@@ -1,17 +1,17 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import UserList from "../components/UsersList";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-import "./Home.css";
-import { Link } from 'react-router-dom';
+import "./CreateGroup.css";
 
 function CreateGroup() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
-  const navigate = useNavigate(); // useNavigate hook from react-router-dom
+  const navigate = useNavigate();
   const token = localStorage.getItem("jwt-token");
 
   const createGroup = async () => {
@@ -20,7 +20,7 @@ function CreateGroup() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token, // Use Bearer token
+          Authorization: token,
         },
         body: JSON.stringify({
           name,
@@ -35,9 +35,6 @@ function CreateGroup() {
       }
 
       console.log(data);
-      //const groupId = data.groupId; //
-
-      // Redirect to the group page
       navigate('/groups');
     } catch (error) {
       console.error("Error creando el grupo:", error.message);
@@ -55,50 +52,42 @@ function CreateGroup() {
     await createGroup();
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
+
   return (
-    <div className="Home text-center">
-      <div>
-        <Header href="/groups" />
-      </div>
-      <body>
+    <div className={`CreateGroup ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="container mt-5">
         <form className="form" onSubmit={handleCreateGroup}>
           <h1>Creación de Grupo</h1>
-
-          <label htmlFor="">Nombre del grupo</label>
+          <label>Nombre del grupo</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-
-          <label >Descripcion</label>
+          <label>Descripcion</label>
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-
-          {/*<label className="sr-only">Usuarios añadidos</label>
-          <input
-            type="text"
-            value={members}
-            onChange={(e) => setMembers(e.target.value.split(","))} // Assuming members are input as comma-separated values
-          />
-
-          <label className="sr-only">Balance</label>
-          <input
-            type="text"
-            value={balance}
-            onChange={(e) => setBalance(e.target.value)}
-          />
-  */}
-          <div className="container text-right mt-5 text-center">
+          <div className="text-center mt-5">
             <Button text="Crear grupo" />
           </div>
-          
         </form>
-      </body>
-      <div></div>
+      </div>
+      <Footer />
     </div>
   );
 }
