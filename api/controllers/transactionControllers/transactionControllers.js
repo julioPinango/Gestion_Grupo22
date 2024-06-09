@@ -35,12 +35,14 @@ const addTransaction = async (req, res) => {
             return res.status(401).json({ message: 'Invalid amount.' });
         }
 
+        const transactionId = await _createTransaction(groupId, payer, amount, description, recurrence, invoice, selecteddate)
+
         for (let i = 0; i < participants.length; i++) { // TODO: handle errors
             if (payer == participants[i]) {
                 continue
-                }
-            
-            await _addTransaction(groupId, payer, participants[i], amount / participants.length, description, recurrence, invoice, selecteddate)
+            }
+
+            await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
         }
 
         res.status(200).json({ message: 'Transaction added' });
@@ -51,17 +53,34 @@ const addTransaction = async (req, res) => {
 };
 
 
-const _addTransaction = async (groupId, from, to, amount, description, recurrence, invoice, date) => { //TODO: handle errors
+const _createTransaction = async (groupId, from, amount, description, recurrence, invoice, date) => { //TODO: handle errors
 
     try {
         const query = {
-          
-            text: `INSERT INTO transactions (group_id, from_username, to_username, amount, description, recurrence, invoice, selecteddate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-            values: [groupId, from, to, amount, description, recurrence, invoice, date]
+
+            text: `INSERT INTO transactions (group_id, payer, amount, description, recurrence, invoice, selecteddate) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+            values: [groupId, from, amount, description, recurrence, invoice, date]
+
+        };
+
+        const queryResult = await client.query(query);
+
+        return queryResult.rows[0].id;
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+    }
+};
+
+const _addDebtor = async (transactionId, to, amount, from, groupId, description, recurrence) => { //TODO: handle errors
+
+    try {
+        const query = {
+
+            text: `INSERT INTO debtors (transaction_id, debtor, amount) VALUES ($1,$2,$3)`,
+            values: [transactionId, to, amount]
 
         };
         await client.query(query);
-        console.log(date);
 
         await updateBalances(amount, groupId, from)
         await updateBalances(-amount, groupId, to)
@@ -116,7 +135,7 @@ const getTransactionsByUser = async (req, res) => {
 
         res.json({ Transactions: result.rows });
     } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error al obtener los datos de transactions:", error);
         res.status(500).send("Error en el servidor");
     }
 };
