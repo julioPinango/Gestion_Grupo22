@@ -99,6 +99,8 @@ A website that helps people keep track of shared expenses and split bills with f
 ### Get balances
 **GET** /groups/{group_id}/balances
 
+## Transactions
+
 ### Add transaction
 **POST** /groups/{group_id}/transactions
 ```
@@ -113,8 +115,25 @@ A website that helps people keep track of shared expenses and split bills with f
 
 (The payer may or may not be a participant)
 
-### Get transactions
+### Edit transaction
+**PATCH** /groups/{group_id}/transactions/{transaction_id}
+```
+{
+  "description": "Bus tickets",
+  "invoices": binary,
+  "recurrence": "Mensual",
+  "selecteddate": "date"
+}
+```
+
+### Get transactions of a group
 **GET** /groups/{group_id}/transactions
+
+### Get all transactions of a user as a payer
+**GET** /transactions/payer
+
+### Get all transactions of a user as a debtor
+**GET** /transactions/debtor
 
 ## Notifications
 

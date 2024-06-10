@@ -35,12 +35,14 @@ const addTransaction = async (req, res) => {
             return res.status(401).json({ message: 'Invalid amount.' });
         }
 
+        const transactionId = await _createTransaction(groupId, payer, amount, description, recurrence, invoice, selecteddate)
+
         for (let i = 0; i < participants.length; i++) { // TODO: handle errors
             if (payer == participants[i]) {
                 continue
-                }
-            
-            await _addTransaction(groupId, payer, participants[i], amount / participants.length, description, recurrence, invoice, selecteddate)
+            }
+
+            await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
         }
 
         res.status(200).json({ message: 'Transaction added' });
@@ -51,17 +53,34 @@ const addTransaction = async (req, res) => {
 };
 
 
-const _addTransaction = async (groupId, from, to, amount, description, recurrence, invoice, date) => { //TODO: handle errors
+const _createTransaction = async (groupId, from, amount, description, recurrence, invoice, date) => { //TODO: handle errors
 
     try {
         const query = {
-          
-            text: `INSERT INTO transactions (group_id, from_username, to_username, amount, description, recurrence, invoice, selecteddate) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-            values: [groupId, from, to, amount, description, recurrence, invoice, date]
+
+            text: `INSERT INTO transactions (group_id, payer, amount, description, recurrence, invoice, selecteddate) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+            values: [groupId, from, amount, description, recurrence, invoice, date]
+
+        };
+
+        const queryResult = await client.query(query);
+
+        return queryResult.rows[0].id;
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+    }
+};
+
+const _addDebtor = async (transactionId, to, amount, from, groupId, description, recurrence) => { //TODO: handle errors
+
+    try {
+        const query = {
+
+            text: `INSERT INTO debtors (transaction_id, debtor, amount) VALUES ($1,$2,$3)`,
+            values: [transactionId, to, amount]
 
         };
         await client.query(query);
-        console.log(date);
 
         await updateBalances(amount, groupId, from)
         await updateBalances(-amount, groupId, to)
@@ -100,44 +119,46 @@ const getTransactions = async (req, res) => {
 };
 
 
-const getTransactionsByUser = async (req, res) => {
+
+const getTransactionsByUserPayer = async (req, res) => {
     try {
         const username = req.user.username;
 
-        const query = {
+        const queryPayer = {
             text: `
             SELECT *
-            FROM transactions t
-            WHERE t.from_username = $1 OR t.to_username = $1`,
+            FROM transactions
+            WHERE payer = $1`,
             values: [username]
         };
 
-        const result = await client.query(query);
+        const resultPayer = await client.query(queryPayer);
 
-        res.json({ Transactions: result.rows });
+        res.json({ Transactions: resultPayer.rows });
     } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error al obtener los datos de transactions:", error);
         res.status(500).send("Error en el servidor");
     }
 };
 
-const getMyTransactions = async (req, res) => {
+const getTransactionsByUserDebtor = async (req, res) => {
     try {
         const username = req.user.username;
 
-        const query = {
+        const queryDebtor = {
             text: `
-            SELECT *
+            SELECT t.id as id, t.payer as payer, d.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate
             FROM transactions t
-            WHERE t.to_username = $1`,
+            INNER JOIN debtors d ON t.id = d.transaction_id
+            WHERE debtor = $1`,
             values: [username]
         };
 
-        const result = await client.query(query);
+        const resultDebtor = await client.query(queryDebtor);
 
-        res.json({ Transactions: result.rows });
+        res.json({ Transactions: resultDebtor.rows });
     } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error al obtener los datos de transactions:", error);
         res.status(500).send("Error en el servidor");
     }
 };
@@ -148,18 +169,26 @@ const updateTransaction = async (req, res) => {
         const username = req.user.username;
         const groupId = req.params.group_id;
 
-        const { description } = req.body;
+        const { description, recurrence, invoice, selectedDate } = req.body;
 
-        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1 AND from_username = $2 OR to_username = $2', [transactionId, username]);
+        if (!await isMember(groupId, username)) {
+            console.error("Error at adding transaction: Not a member.");
+            return res.status(401).json({ message: 'Not authorized.' });
+        }
+
+        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1', [transactionId]);
         if (existingTransaction.rows.length === 0) {
             console.error('Error in update: transaction not found');
             return res.status(404).json({ message: 'Transaction not found' });
         }
 
         const result = await client.query(
-            'UPDATE transactions SET description = $1 WHERE id = $2',
+            'UPDATE transactions SET description = $1, recurrence = $2, invoice = $3, selectedDate = $4 WHERE id = $5',
             [
                 description || existingTransaction.rows[0].description,
+                recurrence || existingTransaction.rows[0].recurrence,
+                invoice || existingTransaction.rows[0].invoice,
+                selectedDate || existingTransaction.rows[0].selectedDate,
                 transactionId,
             ]
         );
@@ -175,4 +204,4 @@ const updateTransaction = async (req, res) => {
     }
 };
 
-module.exports = { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions, updateTransaction };
+module.exports = { addTransaction, getTransactions, getTransactionsByUserPayer, getTransactionsByUserDebtor, updateTransaction };
