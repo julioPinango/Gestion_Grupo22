@@ -299,13 +299,47 @@ const Group = () => {
     );
   };
 
+  const [userBalance, setUserBalance] = useState(0);
+  useEffect(() => {
+    const getBalance = async () => {
+      try {
+
+        const token = localStorage.getItem("jwt-token");
+
+        const response = await fetch(
+          `http://localhost:3001/groups/${params.id}/balances`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const decodedToken = decodeToken(token);
+          setUserBalance(data.Balances.find(user => user.username === decodedToken.username).balance);
+        }
+        
+      } catch (error) {
+        console.error("Error fetching user balance info:", error);
+      }
+    };
+
+    getBalance();
+  }, [params.id]);
+
+
+
   return (
     <div className="text-center">
       <div>
         <Header href="/groups" />
       </div>
 
-      <div className="container mt-5">
+      <div className="container mt-5 mb-5">
       <h2>{groupName}</h2>
       <p>
         <span>
@@ -315,6 +349,17 @@ const Group = () => {
               <img src="/editar.png" width="20" height="20" alt="Editar" />
             </Link>
           )}
+          <div class="container mt-3">
+            <div class="row justify-content-center">
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-body text-left">
+                    Saldo: {userBalance}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </span>
       </p>
     </div>
