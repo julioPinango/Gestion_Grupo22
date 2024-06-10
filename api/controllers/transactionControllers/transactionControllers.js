@@ -169,18 +169,26 @@ const updateTransaction = async (req, res) => {
         const username = req.user.username;
         const groupId = req.params.group_id;
 
-        const { description } = req.body;
+        const { description, recurrence, invoice, selectedDate } = req.body;
 
-        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1 AND from_username = $2 OR to_username = $2', [transactionId, username]);
+        if (!await isMember(groupId, username)) {
+            console.error("Error at adding transaction: Not a member.");
+            return res.status(401).json({ message: 'Not authorized.' });
+        }
+
+        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1', [transactionId]);
         if (existingTransaction.rows.length === 0) {
             console.error('Error in update: transaction not found');
             return res.status(404).json({ message: 'Transaction not found' });
         }
 
         const result = await client.query(
-            'UPDATE transactions SET description = $1 WHERE id = $2',
+            'UPDATE transactions SET description = $1, recurrence = $2, invoice = $3, selectedDate = $4 WHERE id = $5',
             [
                 description || existingTransaction.rows[0].description,
+                recurrence || existingTransaction.rows[0].recurrence,
+                invoice || existingTransaction.rows[0].invoice,
+                selectedDate || existingTransaction.rows[0].selectedDate,
                 transactionId,
             ]
         );
