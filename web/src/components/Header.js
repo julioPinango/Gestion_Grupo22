@@ -109,11 +109,19 @@ const Header = () => {
                       <div className="popover-body">
                         <ul className="list-group">
                           {notifications.map((notification, index) => (
+                            
+                            <Link 
+                            to={`/groups/${notification.group_id}/transactions`} 
+                            style={{ textDecoration: 'none' }}
+                            >
+                            
                             <li key={index} className="list-group-item">
                               Recibiste {notification.amount} de {notification.from_username}.
                               <br />
                               En concepto de: {notification.description}
                             </li>
+                            
+                            </Link>
                           ))}
                         </ul>
                       </div>
