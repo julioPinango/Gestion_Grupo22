@@ -29,7 +29,7 @@ export default function Register () {
                     username,
                     email,
                     password,
-                    date
+                    date_of_birth: date
                 }),
             });
         

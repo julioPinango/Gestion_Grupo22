@@ -5,6 +5,13 @@ import DocuPDF from "./DocuPDF";
 
 const Deudas = () => {
   const [transactions, setTransactions] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [debtInfo, setDebtInfo] = useState({
+    payer: "",
+    amount: 0,
+    description: "",
+    transactionId: 0
+  });
 
   const fetchTransactions = async () => {
     try {
@@ -20,15 +27,16 @@ const Deudas = () => {
       }
 
       const data = await response.json();
-      const filteredTransactions = data.Transactions.filter(transaction => transaction.amount > 0);
-      setTransactions(filteredTransactions);
+      setTransactions(data.Transactions.filter(transaction => transaction.amount > 0));
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
   };
 
-  const cancelDebt = async (group_id, payer, amount, transaction_id) => {
+  const cancelDebt = async () => {
     try {
+      const { group_id, payer, amount, transactionId } = debtInfo;
+
       const response = await fetch(
         'http://localhost:3001/transactions/canceldebt',
         {
@@ -41,7 +49,7 @@ const Deudas = () => {
             group_id,
             payer,
             amount,
-            transaction_id
+            transaction_id: transactionId
           }),
         }
       );
@@ -50,15 +58,9 @@ const Deudas = () => {
         throw new Error("Error en el servidor");
       }
 
-      // Actualizar el monto de la transacción a 0 en el estado local
-      const updatedTransactions = transactions.map(transaction => {
-        if (transaction.id === transaction_id) {
-          return { ...transaction, amount: 0 };
-        }
-        return transaction;
-      });
-
-      setTransactions(updatedTransactions);
+      // Actualizar el estado local para reflejar el cambio
+      setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
+      setShowModal(false);
     } catch (error) {
       console.error("Error editando la transacción:", error.message);
       alert("No se pudo editar la transacción: " + error.message);
@@ -69,6 +71,16 @@ const Deudas = () => {
     fetchTransactions();
   }, []);
 
+  const handleModalOpen = (transaction) => {
+    setDebtInfo({
+      payer: transaction.payer,
+      amount: transaction.amount,
+      description: transaction.description,
+      transactionId: transaction.id
+    });
+    setShowModal(true);
+  };
+
   return (
     <div className="text-center">
       <div>
@@ -76,7 +88,7 @@ const Deudas = () => {
       </div>
 
       {transactions && transactions.length > 0 ? (
-        <div className="table-responsive mt-5" >
+        <div className="table-responsive mt-5">
           <table className="table table-striped table-sm">
             <thead>
               <tr>
@@ -98,7 +110,7 @@ const Deudas = () => {
                     <button
                       type="button"
                       className="btn btn-primary"
-                      onClick={() => cancelDebt(transaction.group_id, transaction.payer, transaction.amount, transaction.id)}
+                      onClick={() => handleModalOpen(transaction)}
                     >
                       Saldar deuda
                     </button>
@@ -110,7 +122,27 @@ const Deudas = () => {
         </div>
       ) : (
         <div className="mt-5" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "70vh" }}>
-          <h1>No hay transacciones pendientes de pago</h1>
+          <h1>No hay transacciones aún</h1>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar Pago</h5>
+                
+              </div>
+              <div className="modal-body">
+                <p>¿Estás seguro que deseas pagarle {debtInfo.amount} por {debtInfo.description} a {debtInfo.payer}?</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-danger" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-success" onClick={cancelDebt}>Confirmar Pago</button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -129,4 +161,3 @@ const Deudas = () => {
 };
 
 export default Deudas;
-
