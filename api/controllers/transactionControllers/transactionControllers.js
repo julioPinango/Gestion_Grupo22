@@ -119,44 +119,46 @@ const getTransactions = async (req, res) => {
 };
 
 
-const getTransactionsByUser = async (req, res) => {
+
+const getTransactionsByUserPayer = async (req, res) => {
     try {
         const username = req.user.username;
 
-        const query = {
+        const queryPayer = {
             text: `
             SELECT *
-            FROM transactions t
-            WHERE t.from_username = $1 OR t.to_username = $1`,
+            FROM transactions
+            WHERE payer = $1`,
             values: [username]
         };
 
-        const result = await client.query(query);
+        const resultPayer = await client.query(queryPayer);
 
-        res.json({ Transactions: result.rows });
+        res.json({ Transactions: resultPayer.rows });
     } catch (error) {
         console.error("Error al obtener los datos de transactions:", error);
         res.status(500).send("Error en el servidor");
     }
 };
 
-const getMyTransactions = async (req, res) => {
+const getTransactionsByUserDebtor = async (req, res) => {
     try {
         const username = req.user.username;
 
-        const query = {
+        const queryDebtor = {
             text: `
-            SELECT *
+            SELECT t.id as id, t.payer as payer, d.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate
             FROM transactions t
-            WHERE t.to_username = $1`,
+            INNER JOIN debtors d ON t.id = d.transaction_id
+            WHERE debtor = $1`,
             values: [username]
         };
 
-        const result = await client.query(query);
+        const resultDebtor = await client.query(queryDebtor);
 
-        res.json({ Transactions: result.rows });
+        res.json({ Transactions: resultDebtor.rows });
     } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error al obtener los datos de transactions:", error);
         res.status(500).send("Error en el servidor");
     }
 };
@@ -194,4 +196,4 @@ const updateTransaction = async (req, res) => {
     }
 };
 
-module.exports = { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions, updateTransaction };
+module.exports = { addTransaction, getTransactions, getTransactionsByUserPayer, getTransactionsByUserDebtor, updateTransaction };
