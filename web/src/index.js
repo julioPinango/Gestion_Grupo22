@@ -14,7 +14,10 @@ import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-rou
 import UserList from "./components/UsersList";
 import Transactions from "./routes/Transactions";
 import Deudas from "./routes/Deudas";
+import EditTransaction from "./routes/EditTransaction";
 import MyTransactions from "./routes/MyTransactions";
+import Recordatorios from "./routes/Recordatorios";
+import Profile from "./routes/Profile";
 
 const getAccessToken = () =>{
   return localStorage.getItem('jwt-token')
@@ -78,6 +81,18 @@ const router = createBrowserRouter([
       {
         path: "/deudas",
         element: <Deudas />,
+      },
+      {
+        path: "/recordatorios",
+        element: <Recordatorios />,
+      },
+      {
+        path: "/groups/:id/transactions/:transaction_id",
+        element: <EditTransaction />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       }
     ]
   }

@@ -76,6 +76,7 @@ const getGroup = async (req, res) => {
         res.status(500).send("Error en el servidor");
     }
 };
+
 const updateGroup = async (req, res) => {
     try {
         const groupId = req.params.group_id;

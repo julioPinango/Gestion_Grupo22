@@ -1,0 +1,70 @@
+/* Estilos generales para el cuerpo en modo oscuro y claro */
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  body.light-mode {
+    background-color: #fff;
+    color: #333;
+  }
+  
+  /* Contenedor de recordatorios */
+  .Recordatorios {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative; /* Para que el contenedor sea relativo y la imagen pueda ser absoluta */
+  }
+  
+  /* Imágenes de fondo */
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(5px); /* Aplicar filtro de desenfoque */
+    z-index: -1; /* Asegura que la imagen de fondo esté detrás de otros elementos */
+  }
+  
+  /* Estilos para la funcionalidad del modo oscuro y claro */
+  .light-mode .Recordatorios {
+    background-image: url('../img/lightmodefondo1.jpg'); /* Ruta de la imagen de fondo para modo claro */
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  .dark-mode .Recordatorios {
+    background-image: url('../img/darkmodefondo1.jpg'); /* Ruta de la imagen de fondo para modo oscuro */
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  /* Estilos para los elementos dentro del contenedor de recordatorios */
+  .Recordatorios .text-center {
+    padding: 20px;
+  }
+  
+  /* Estilos para los próximos gastos */
+  .Recordatorios .mt-5 {
+    margin-top: 50px;
+  }
+  
+  .Recordatorios h2 {
+    margin-bottom: 20px;
+  }
+  
+  .Recordatorios .list-group {
+    margin-top: 20px;
+  }
+  
+  .Recordatorios .list-group-item {
+    margin-top: 10px;
+  }
+  
+  /* Estilos para los botones */
+  .Recordatorios .btn {
+    margin-top: 20px;
+  }
+  

@@ -106,7 +106,8 @@ A website that helps people keep track of shared expenses and split bills with f
   "amount": 100,
   "participants": ["avilagaston", "avilagaston2"],
   "payer": "avilagaston",
-  "description": "Bus tickets"
+  "description": "Bus tickets",
+  "invoices": binary
 }
 ```
 
@@ -114,5 +115,10 @@ A website that helps people keep track of shared expenses and split bills with f
 
 ### Get transactions
 **GET** /groups/{group_id}/transactions
+
+## Notifications
+
+### Get Notifications
+**GET** /notifications
 
 ## WIP...

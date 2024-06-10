@@ -6,11 +6,12 @@ app.use(cors());
 app.use(bodyParser.json());
 const PORT = 3001;
 const { connectToDatabase } = require("./utils/constants");
-const { createUser, login, getUsers, getUser } = require("./controllers/userControllers/userControllers");
+const { createUser, login, getUsers, getUser, updateUser } = require("./controllers/userControllers/userControllers");
 const { createGroup, getGroups, getGroup, getAdmin, updateGroup } = require("./controllers/groupControllers/groupControllers");
 const { getMembers, addMember, deleteMember } = require("./controllers/memberControllers/memberControllers");
 const { getBalances } = require("./controllers/balanceControllers/balanceControllers");
-const { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions } = require("./controllers/transactionControllers/transactionControllers");
+const { addTransaction, getTransactions, getTransactionsByUser, getMyTransactions, updateTransaction } = require("./controllers/transactionControllers/transactionControllers");
+const { getNotifications } = require("./controllers/notificationControllers/notificationControllers");
 const { authenticateToken } = require("./authMiddleware/middleware");
 
 //User Queries  
@@ -18,6 +19,7 @@ app.get("/users/", authenticateToken, getUsers);
 app.get("/users/:username", authenticateToken, getUser);
 app.post("/users", createUser);
 app.post("/users/login", login);
+app.patch("/users/:username", authenticateToken, updateUser);
 
 //Group Queries
 app.get("/groups/", authenticateToken, getGroups);
@@ -39,6 +41,10 @@ app.get("/transactions/", authenticateToken, getTransactionsByUser);
 app.get("/mytransactions/", authenticateToken, getMyTransactions);
 app.get("/groups/:group_id/transactions", authenticateToken, getTransactions);
 app.post("/groups/:group_id/transactions", authenticateToken, addTransaction);
+app.patch("/groups/:group_id/transactions/:transaction_id", authenticateToken, updateTransaction);
+
+//Notifications Queries
+app.get("/notifications/", authenticateToken, getNotifications);
 
 
 

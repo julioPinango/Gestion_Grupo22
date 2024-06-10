@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-import "./EditGroup.css";
+import "./Home.css";
+import { Link } from "react-router-dom";
 
 function EditGroup() {
   const [name, setName] = useState("");
@@ -11,35 +12,23 @@ function EditGroup() {
   const params = useParams();
   const navigate = useNavigate(); // useNavigate hook from react-router-dom
   const token = localStorage.getItem("jwt-token");
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
-  const toggleDarkMode = () => {
-    setDarkMode(prevMode => {
-      const newMode = !prevMode;
-      localStorage.setItem('darkMode', newMode);
-      return newMode;
-    });
-  };
-
-  const handleEditGroup = async (e) => {
-    e.preventDefault();
-    if (name === "" || description === "") {
-      alert("Campos incompletos");
-      return;
-    }
-
+  const editGroup = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/groups/${params.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token, // Use Bearer token
-        },
-        body: JSON.stringify({
-          name,
-          description,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token, // Use Bearer token
+          },
+          body: JSON.stringify({
+            name,
+            description,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -69,7 +58,7 @@ function EditGroup() {
             onChange={(e) => setName(e.target.value)}
           />
 
-          <label htmlFor="">Actualizar descripción</label>
+          <label htmlFor="">Nueva descripción</label>
           <input
             type="text"
             value={description}

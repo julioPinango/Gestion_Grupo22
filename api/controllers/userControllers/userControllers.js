@@ -92,7 +92,47 @@ const getUser = async (req, res) => {
     }
 };
 
+const updateUser = async (req, res) => {
+    try {
+        const username = req.params.username;
+
+        const {
+            name,
+            lastname,
+        } = req.body;
+
+        const existingUser = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+        if (existingUser.rows.length === 0) {
+            console.error('Error in update: user not found');
+            return res.status(404).json({ message: 'user not found' });
+        }
+
+        const updateFields = {
+            name: name || existingUser.rows[0].name,
+            lastname: lastname || existingUser.rows[0].lastname,            
+        };
+
+        const result = await client.query(
+            'UPDATE users SET name = $1, lastname = $2 WHERE username = $3',
+            [
+                updateFields.name,
+                updateFields.lastname,
+                username,
+            ]
+        );
+
+        if (result.rowCount === 0) {
+            console.error('Error in update: user information not updated');
+            return res.status(500).json({ message: 'Error updating user information' });
+        }
+        res.json({ message: "User updated" });
+    } catch (error) {
+        console.error('Error in update:', error);
+        res.status(500).send(req.params.username);
+        console.log(req.params.username)
+
+    }
+};
 
 
-
-module.exports = { createUser, login, getUsers, getUser };
+module.exports = { createUser, login, getUsers, getUser, updateUser };
