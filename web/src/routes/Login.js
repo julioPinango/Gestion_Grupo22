@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../components/Button";
-import "./Home.css";
+import "./Login.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const router = useRouter()
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "light-mode";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      await fetch("http://localhost:3001/users/login", {
+      const response = await fetch("http://localhost:3001/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,57 +30,48 @@ export default function Login() {
           email,
           password,
         }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.jwt !== null) {
-            localStorage.setItem("jwt-token", data.jwt);
-            console.log(data.jwt);
-            //setEmail('')
-            //setPassword('')
-            //router.push('/jwt-safehouse')
-          } else {
-            alert(data.message);
-            console.log("esta es la data: " + data);
-          }
-        });
-
-      window.location.href = "/groups";
+      });
+      const data = await response.json();
+      if (data.jwt !== null) {
+        localStorage.setItem("jwt-token", data.jwt);
+        window.location.href = "/groups";
+      } else {
+        alert(data.message);
+      }
     } catch (error) {
       console.error("Login failed:", error.message);
       alert("Login failed: " + error.message);
     }
   };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="Home">
-      <div>
-        <Header href="/" />
-      </div>
-      <body>
+    <div className={`Login d-flex flex-column min-vh-100 ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
+      <div className="flex-grow-1 d-flex align-items-center justify-content-center">
         <form className="form" onSubmit={handleLogin}>
           <h1>Ingreso</h1>
-
-          <label htmlFor="">Email</label>
+          <label htmlFor="email">Email</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-
-          <label htmlFor="">Contraseña</label>
+          <label htmlFor="password">Contraseña</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-
           <Button text="Ingresar" />
         </form>
-      </body>
-      <div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

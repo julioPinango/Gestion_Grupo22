@@ -5,6 +5,7 @@ import DocuPDF from "./DocuPDF";
 
 const Deudas = () => {
   const [transactions, setTransactions] = useState([]);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const [showModal, setShowModal] = useState(false);
   const [debtInfo, setDebtInfo] = useState({
     payer: "",
@@ -86,10 +87,22 @@ const Deudas = () => {
     setShowModal(true);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
+
   return (
-    <div className="text-center">
+    <div className={`Deudas ${darkMode ? "dark-mode" : "light-mode"}`}>
       <div>
-        <Header href="/groups" />
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
 
       {transactions && transactions.length > 0 ? (
@@ -172,4 +185,3 @@ const Deudas = () => {
 };
 
 export default Deudas;
-

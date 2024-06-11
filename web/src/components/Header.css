@@ -1,0 +1,115 @@
+.header .container {
+  max-width: 1200px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header .logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.header .logo {
+  max-height: 50px;
+}
+
+.header .nombre-img {
+  max-height: 50px;
+  margin-left: 10px;
+}
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.nav-pills .nav-link {
+  color: white;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #0d6efd;
+}
+
+.toggle-dark-mode-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Light Mode */
+.light-mode .header {
+  background-color: #f0f0f0;
+  color: #333333;
+}
+
+.light-mode .nav-pills .nav-link {
+  color: #333333;
+}
+
+.light-mode .nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.light-mode .toggle-dark-mode-btn {
+  color: #333333;
+}
+
+/* Dark Mode */
+.dark-mode .header {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark-mode .nav-pills .nav-link {
+  color: #ffffff;
+}
+
+.popover{
+  color:#000000
+}
+
+.dark-mode .nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.dark-mode .toggle-dark-mode-btn {
+  color: #ffffff;
+}
+
+.notification-container {
+  position: relative;
+}
+
+.notification-icon {
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 10px;
+}
+
+.dark-mode-icon {
+  color: white;
+}

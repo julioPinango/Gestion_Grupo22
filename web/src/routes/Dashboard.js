@@ -1,15 +1,14 @@
-import React from "react";
-import "./Home.css";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 
 function Dashboard() {
   const [groups, setGroups] = useState([]);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -34,20 +33,27 @@ function Dashboard() {
     fetchGroups();
   }, []);
 
-  return (
-    <div className="Home">
-      {" "}
-      {}
-      <div>
-        <Header href="/dashboard" />
-      </div>
-      <body className="container mt-5">
-        <h2 className="body text-center">Welcome to BillBuddy</h2>
-       
-        <h3 className="body text-center mt-5">Mis grupos</h3>
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
 
-        <div class="container text-left">
-          <table class="table table-dark">
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
+
+
+  return (
+    <div className={`Dashboard ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="container mt-5">
+        <h2 className="text-center">Welcome to BillBuddy</h2>
+        <h3 className="text-center mt-5">Mis grupos</h3>
+        <div className="container text-left">
+          <table className="table table-dark">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -58,42 +64,35 @@ function Dashboard() {
             </thead>
             <tbody>
               {groups.map((group, index) => (
-                <tr>
-                  <th scope="row">{index}</th>
+                <tr key={index}>
+                  <th scope="row">{index + 1}</th>
                   <td>{group.name}</td>
                   <td>{group.description}</td>
                   <td>
-                    <div
-                      class="btn-group"
-                      role="group"
-                      aria-label="Basic example"
-                    >
-                      <div class="btn-group">
-                      <button onClick={() =>  navigate(`${group.id}`)} class="btn btn-primary">
-                          Ver grupo
-                        </button>
-                        {/*<button onClick={() =>  navigate(`add/${group.id}`)} class="btn btn-warning">
-                          Añadir participantes
-              </button>*/}
-                      </div>
-                      
+                    <div className="btn-group" role="group" aria-label="Basic example">
+                      <button onClick={() => navigate(`${group.id}`)} className="btn btn-primary">
+                        Ver grupo
+                      </button>
+                      {/*<button onClick={() => navigate(`add/${group.id}`)} className="btn btn-warning">
+                        Añadir participantes
+                      </button>*/}
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
           <div className="d-flex justify-content-end mt-5">
-            <a href="/group/create" class="btn btn-primary">
+            <a href="/group/create" className="btn btn-primary">
               Crear grupo
             </a>
           </div>
         </div>
-      </body>
-   
+      </div>
+      <Footer />
     </div>
   );
 }
 
 export default Dashboard;
+

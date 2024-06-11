@@ -29,10 +29,20 @@ const Group = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
 
   const toggleCalendar = () => {
     setCalendarVisible(!calendarVisible);
   };
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem("darkMode", newMode);
+      return newMode;
+    });
+  };
+
   useEffect(() => {
     const currentDate = new Date();
     setSelectedDate(currentDate);
@@ -60,7 +70,7 @@ const Group = () => {
   };
 
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    const options = { year: "numeric", month: "numeric", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
   };
 
@@ -86,39 +96,35 @@ const Group = () => {
       );
       setShowModal(false);
 
-      // Mostrar la alerta
-      setAlertMessage(
-        `El usuario "${username}" ha sido eliminado del grupo con éxito!`
-      );
+      setAlertMessage(`El usuario "${username}" ha sido eliminado del grupo con éxito!`);
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
     } catch (error) {
       console.error("Error eliminando el participante:", error.message);
-      //alert("No se pudo eliminar el participante: " + error.message);
     }
   };
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     let month = today.getMonth() + 1;
     let day = today.getDate();
-  
-    // Agregar un 0 al mes si es menor que 10
+
     if (month < 10) {
-      month = '0' + month;
+      month = "0" + month;
     }
-  
-    // Agregar un 0 al día si es menor que 10
+
     if (day < 10) {
-      day = '0' + day;
+      day = "0" + day;
     }
-  
+
     return `${year}-${month}-${day}`;
   };
+
   const [date, setDate] = useState(getCurrentDate());
-  
+
   const addMember = async (member) => {
     try {
       const response = await fetch(
@@ -136,10 +142,8 @@ const Group = () => {
       if (!response.ok) {
         throw new Error("Failed to add member");
       }
-      // Mostrar la alerta
-      setAlertMessage(
-        `El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`
-      );
+
+      setAlertMessage(`El usuario "${usuarioAAgregar}" ha sido agregado al grupo con éxito!`);
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -162,16 +166,16 @@ const Group = () => {
 
     try {
       console.log("Dia formateado:", selectedDate);
-      let newDate = new Date(selectedDate); // Clonar la fecha seleccionada
+      let newDate = new Date(selectedDate);
       if (recurrence === "Semanal") {
-        newDate.setDate(newDate.getDate() + 7); // Incrementar la fecha en una semana
+        newDate.setDate(newDate.getDate() + 7);
       } else if (recurrence === "Mensual") {
-        newDate.setMonth(newDate.getMonth() + 1); // Incrementar la fecha en un mes
+        newDate.setMonth(newDate.getMonth() + 1);
       }
-  
-      const formattedDate = newDate.toISOString(); // Formatear la nueva fecha
+
+      const formattedDate = newDate.toISOString();
       console.log("Dia formateado:", formattedDate);
-  
+
       const response = await fetch(
         `http://localhost:3001/groups/${params.id}/transactions`,
         {
@@ -251,9 +255,7 @@ const Group = () => {
 
         if (response.ok) {
           const responseData = await response.json();
-          let name =
-            responseData.group.name.charAt(0).toUpperCase() +
-            responseData.group.name.slice(1);
+          let name = responseData.group.name.charAt(0).toUpperCase() + responseData.group.name.slice(1);
           setGroupName(name);
           setGroupDescription(responseData.group.description);
         }
@@ -334,9 +336,9 @@ const Group = () => {
 
 
   return (
-    <div className="text-center">
+    <div className={`Group ${darkMode ? "dark-mode" : "light-mode"}`}>
       <div>
-        <Header href="/groups" />
+        <Header href="/groups" darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
 
       <div className="container mt-5 mb-5">
@@ -666,7 +668,7 @@ const Group = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
 export default Group;
