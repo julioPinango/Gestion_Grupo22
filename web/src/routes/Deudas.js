@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import DocuPDF from "./DocuPDF";
+import "./Deudas.css";
 
 const Deudas = () => {
   const [transactions, setTransactions] = useState([]);
@@ -180,6 +182,7 @@ const Deudas = () => {
           </PDFDownloadLink>
         </div>
       )}
+      <Footer/>
     </div>
   );
 };
