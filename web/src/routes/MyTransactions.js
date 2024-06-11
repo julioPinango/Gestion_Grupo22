@@ -9,7 +9,7 @@ const MyTransactions = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/transactions", {
+        const response = await fetch("http://localhost:3001/transactions/debtor", {
           headers: {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
