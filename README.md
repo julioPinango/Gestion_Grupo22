@@ -109,7 +109,8 @@ A website that helps people keep track of shared expenses and split bills with f
   "participants": ["avilagaston", "avilagaston2"],
   "payer": "avilagaston",
   "description": "Bus tickets",
-  "invoices": binary
+  "invoices": binary,
+  "category": 3
 }
 ```
 
@@ -129,11 +130,20 @@ A website that helps people keep track of shared expenses and split bills with f
 ### Get transactions of a group
 **GET** /groups/{group_id}/transactions
 
+### Get transactions of a group by category
+**GET** /groups/{group_id}/transactions?category?3
+
 ### Get all transactions of a user as a payer
 **GET** /transactions/payer
 
+### Get all transactions of a user as a payer by category
+**GET** /transactions/payer?category=3
+
 ### Get all transactions of a user as a debtor
 **GET** /transactions/debtor
+
+### Get all transactions of a user as a debtor by category
+**GET** /transactions/debtor?category=3
 
 ## Notifications
 
