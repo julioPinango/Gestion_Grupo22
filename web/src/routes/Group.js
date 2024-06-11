@@ -12,7 +12,7 @@ const Group = () => {
   const [usuarioAAgregar, setUsuarioAAgregar] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const [category, setCategory] = useState(1);
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -180,7 +180,7 @@ const Group = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ payer, amount, participants, description, recurrence, selectedDate: formattedDate }),
+          body: JSON.stringify({ payer, amount, participants, description, recurrence, selectedDate: formattedDate, category }),
         }
       );
 
@@ -589,6 +589,23 @@ const Group = () => {
                     </div>
                   </div>
                 </div>
+                <div className="mb-3">
+            <label htmlFor="category" className="form-label">
+              Categoría
+            </label>
+            <select
+              className="form-select"
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(parseInt(e.target.value))}
+            >
+              <option value={1}>Gasto general</option>
+              <option value={2}>Recreación</option>
+              <option value={3}>Servicio</option>
+              <option value={4}>Transporte</option>
+              {/* Agrega más opciones según sea necesario */}
+            </select>
+          </div>
                 <button type="submit" className="btn btn-primary">
                   Agregar
                 </button>

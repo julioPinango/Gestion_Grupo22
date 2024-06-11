@@ -115,21 +115,21 @@ const Transactions = () => {
         <Header href="/groups" />
       </div>
 
-      {transactions && transactions.length > 0 ? (
-        <div className="table-responsive mt-5">
-          <table className="table table-striped table-sm">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Monto</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">De</th>
-                <th scope="col">Hacia</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((transaction, index) => (
+      <div className="table-responsive mt-5">
+        <table className="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Monto</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">De</th>
+              <th scope="col">Hacia</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions && transactions.length > 0 ? (
+              transactions.map((transaction, index) => (
                 <tr key={index}>
                   <th scope="row">{index}</th>
                   <td>{transaction.amount}</td>
@@ -146,15 +146,19 @@ const Transactions = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="mt-5">
-          <h1>No hay transacciones aún</h1>
-        </div>
-      )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6">
+                  <div className="mt-5">
+                    <h1>No hay transacciones aún</h1>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {transactions && transactions.length > 0 && (
         <div>
@@ -187,7 +191,7 @@ const Transactions = () => {
                 <input
                   type="text"
                   id="newDescription"
-                  className="form-control text-center" // Añadimos la clase text-center
+                  className="form-control text-center"
                   value={newDescription}
                   onChange={handleInputChange}
                 />
@@ -197,12 +201,12 @@ const Transactions = () => {
                   selected={selectedDate}
                   onChange={handleDateChange}
                   dateFormat="dd/MM/yyyy"
-                  className="form-control text-center" // Añadimos la clase text-center
+                  className="form-control text-center"
                 />
                 <label htmlFor="recurrence">Recurrencia:</label>
                 <select
                   id="recurrence"
-                  className="form-control text-center" // Añadimos la clase text-center
+                  className="form-control text-center"
                   value={recurrence}
                   onChange={handleRecurrenceChange}
                 >
