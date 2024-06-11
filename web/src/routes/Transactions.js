@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
 import DocuPDF from "./DocuPDF";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newGroupName, setNewGroupName] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [recurrence, setRecurrence] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
   const params = useParams();
+
+  const recurrenceOptions = ["Única vez", "Semanal", "Mensual"];
 
   const fetchTransactions = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/groups/${params.id}/transactions`,
+        'http://localhost:3001/transactions/payer',
         {
           method: "GET",
           headers: {
@@ -38,7 +44,7 @@ const Transactions = () => {
   const editTransaction = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/groups/${params.id}/transactions/${params.id}`,
+        `http://localhost:3001/groups/${params.id}/transactions/${selectedTransactionId}`,
         {
           method: "PATCH",
           headers: {
@@ -46,7 +52,9 @@ const Transactions = () => {
             Authorization: localStorage.getItem("jwt-token"),
           },
           body: JSON.stringify({
-            description: newGroupName,
+            description: newDescription,
+            selectedDate: selectedDate,
+            recurrence: recurrence,
           }),
         }
       );
@@ -59,18 +67,22 @@ const Transactions = () => {
 
       console.log(data);
       setIsModalOpen(false);
-      // Actualizar la lista de transacciones después de editar
       fetchTransactions();
     } catch (error) {
-      
-      console.error("Error editando la transacción:", error.message);
-      alert("No se pudo editar la transacción: " + error.message);
+      console.error("Error editing transaction:", error.message);
+      alert("Unable to edit transaction: " + error.message);
     }
   };
 
-  const handleOpenModal = (transactionId) => {
+  const handleOpenModal = async (transactionId) => {
     setSelectedTransactionId(transactionId);
     setIsModalOpen(true);
+
+    // Obtener los detalles de la transacción seleccionada
+    const selectedTransaction = transactions.find(transaction => transaction.id === transactionId);
+    setNewDescription(selectedTransaction.description);
+    setRecurrence(selectedTransaction.recurrence);
+    setSelectedDate(selectedTransaction.selecteddate);
   };
 
   const handleCloseModal = () => {
@@ -78,12 +90,20 @@ const Transactions = () => {
   };
 
   const handleInputChange = (event) => {
-    setNewGroupName(event.target.value);
+    setNewDescription(event.target.value);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleRecurrenceChange = (event) => {
+    setRecurrence(event.target.value);
   };
 
   const handleSubmit = async () => {
     if (!selectedTransactionId) {
-      alert("No se ha seleccionado ninguna transacción para editar.");
+      alert("No transaction selected for editing.");
       return;
     }
     await editTransaction();
@@ -117,22 +137,13 @@ const Transactions = () => {
                   <td>{transaction.from_username}</td>
                   <td>{transaction.to_username}</td>
                   <td>
-                   {/*} <button
+                    <button
                       type="button"
                       className="btn btn-primary"
                       onClick={() => handleOpenModal(transaction.id)}
                     >
                       Editar transacción
                     </button>
-              */}
-              <Link to={`/groups/${params.id}/transactions/${transaction.id}`} style={{ padding: "0 10px" }}>
-              <button
-                      type="button"
-                      className="btn btn-primary"
-                    >
-                      Editar transacción
-                    </button>
-            </Link>
                   </td>
                 </tr>
               ))}
@@ -158,7 +169,7 @@ const Transactions = () => {
         </div>
       )}
 
-      {/* Modal para editar la descripción del grupo */}
+      {/* Modal para editar la descripción de la transacción */}
       {isModalOpen && (
         <div
           className="modal"
@@ -169,17 +180,38 @@ const Transactions = () => {
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Editar descripción del grupo</h5>
+                <h5 className="modal-title">Editar transacción</h5>
               </div>
               <div className="modal-body">
-                <label htmlFor="newGroupName">Nueva descripción del grupo:</label>
+                <label htmlFor="newDescription">Nueva descripción:</label>
                 <input
                   type="text"
-                  id="newGroupName"
-                  className="form-control"
-                  value={newGroupName}
+                  id="newDescription"
+                  className="form-control text-center" // Añadimos la clase text-center
+                  value={newDescription}
                   onChange={handleInputChange}
                 />
+                <label htmlFor="selectedDate">Fecha seleccionada:</label>
+                <DatePicker
+                  id="selectedDate"
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  dateFormat="dd/MM/yyyy"
+                  className="form-control text-center" // Añadimos la clase text-center
+                />
+                <label htmlFor="recurrence">Recurrencia:</label>
+                <select
+                  id="recurrence"
+                  className="form-control text-center" // Añadimos la clase text-center
+                  value={recurrence}
+                  onChange={handleRecurrenceChange}
+                >
+                  {recurrenceOptions.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="modal-footer">
                 <button
@@ -206,6 +238,4 @@ const Transactions = () => {
 };
 
 export default Transactions;
-
-
 

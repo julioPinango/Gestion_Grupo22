@@ -160,7 +160,7 @@ const getTransactionsByUserDebtor = async (req, res) => {
 
         const queryDebtor = {
             text: `
-            SELECT t.id as id, t.payer as payer, d.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate, t.category as category
+            SELECT t.id as id, t.group_id as group_id, t.payer as payer, d.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate, t.category as category
             FROM transactions t
             INNER JOIN debtors d ON t.id = d.transaction_id
             WHERE debtor = $1`,
@@ -180,6 +180,49 @@ const getTransactionsByUserDebtor = async (req, res) => {
         res.status(500).send("Error en el servidor");
     }
 };
+
+const cancelDebt = async (req, res) => {
+    try {
+        const from = req.user.username;
+        const groupId = req.body.group_id;
+        const to = req.body.payer;
+        const amount = req.body.amount;
+        const transactionId = req.body.transaction_id;
+
+        const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1', [transactionId]);
+        if (existingTransaction.rows.length === 0) {
+            console.error('Error in update: transaction not found');
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        const newAmount = existingTransaction.rows[0].amount - amount;
+
+        // Actualizar el monto en la tabla transactions
+        const updateTransactionQuery = {
+            text: 'UPDATE transactions SET amount = $1 WHERE id = $2',
+            values: [newAmount, transactionId]
+        };
+        await client.query(updateTransactionQuery);
+
+        // Actualizar el monto en la tabla debtors
+        const updateDebtorsQuery = {
+            text: 'UPDATE debtors SET amount = amount - $1 WHERE transaction_id = $2 AND debtor = $3',
+            values: [amount, transactionId, from]
+        };
+        await client.query(updateDebtorsQuery);
+
+        // Actualizar los saldos de los miembros del grupo
+        await updateBalances(amount, groupId, from);
+        await updateBalances(-amount, groupId, to);
+
+        res.json({ message: 'Se canceló la deuda con éxito' });
+
+    } catch (error) {
+        console.error("Error al obtener los datos de transactions:", error);
+        res.status(500).send("Error en el servidor");
+    }
+};
+
 
 const updateTransaction = async (req, res) => {
     try {
@@ -223,4 +266,4 @@ const updateTransaction = async (req, res) => {
     }
 };
 
-module.exports = { addTransaction, getTransactions, getTransactionsByUserPayer, getTransactionsByUserDebtor, updateTransaction };
+module.exports = { addTransaction, getTransactions, cancelDebt, getTransactionsByUserPayer, getTransactionsByUserDebtor, updateTransaction };
