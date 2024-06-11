@@ -50,7 +50,36 @@ const MyTransactions = () => {
         let debtorTransactions = [];
         let payerTransactions = [];
 
-        if (category !== null) {
+        if (category === null) {
+          // Si la categoría es null, obtener todas las transacciones sin filtrar por categoría
+          const [debtorResponse, payerResponse] = await Promise.all([
+            fetch("http://localhost:3001/transactions/debtor", {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("jwt-token"),
+              },
+            }),
+            fetch("http://localhost:3001/transactions/payer", {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("jwt-token"),
+              },
+            }),
+          ]);
+
+          if (!debtorResponse.ok || !payerResponse.ok) {
+            throw new Error("Failed to fetch transactions");
+          }
+
+          const [debtorData, payerData] = await Promise.all([
+            debtorResponse.json(),
+            payerResponse.json(),
+          ]);
+
+          debtorTransactions = debtorData.Transactions;
+          payerTransactions = payerData.Transactions;
+        } else {
+          // Si la categoría no es null, obtener transacciones filtradas por categoría
           const [debtorResponse, payerResponse] = await Promise.all([
             fetch(`http://localhost:3001/transactions/debtor?category=${category}`, {
               headers: {
@@ -66,15 +95,17 @@ const MyTransactions = () => {
             }),
           ]);
 
-          if (debtorResponse.ok) {
-            const debtorData = await debtorResponse.json();
-            debtorTransactions = debtorData.Transactions;
+          if (!debtorResponse.ok || !payerResponse.ok) {
+            throw new Error("Failed to fetch transactions");
           }
 
-          if (payerResponse.ok) {
-            const payerData = await payerResponse.json();
-            payerTransactions = payerData.Transactions;
-          }
+          const [debtorData, payerData] = await Promise.all([
+            debtorResponse.json(),
+            payerResponse.json(),
+          ]);
+
+          debtorTransactions = debtorData.Transactions;
+          payerTransactions = payerData.Transactions;
         }
 
         const combinedTransactions = [...debtorTransactions, ...payerTransactions];
