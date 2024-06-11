@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import Header from "../components/Header";
+import "./Profile.css";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -9,6 +10,7 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
 
   const token = localStorage.getItem("jwt-token");
   const decodedToken = jwtDecode(token);
@@ -83,6 +85,20 @@ const Profile = () => {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+    localStorage.setItem("darkMode", !darkMode);
+  };
+
+  useEffect(() => {
+    const savedDarkMode = JSON.parse(localStorage.getItem("darkMode"));
+    if (savedDarkMode) {
+      setDarkMode(savedDarkMode);
+      document.body.classList.add("dark-mode");
+    }
+  }, []);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -92,11 +108,12 @@ const Profile = () => {
   }
 
   return (
-    <div className="text-center">
-      <div>
-        <Header href="/groups" />
-      </div>
+    <div className={`profile-container ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode}/>
       <div className="container mt-4">
+        <div className="profile-header">
+          <h2>Perfil de Usuario</h2>
+        </div>
         <form className="form-inline d-flex justify-content-center">
           <div className="col-auto align-items-center">
             <div className="input-group mb-2 mr-sm-2">
@@ -110,7 +127,7 @@ const Profile = () => {
                 placeholder="Nombre"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                disabled={!editMode} 
+                disabled={!editMode}
                 style={{ height: "38px", verticalAlign: "middle", marginTop: 0 }}
               />
             </div>
@@ -125,7 +142,7 @@ const Profile = () => {
                 placeholder="Apellido"
                 value={lastname}
                 onChange={(e) => setLastname(e.target.value)}
-                disabled={!editMode} 
+                disabled={!editMode}
                 style={{ height: "38px", verticalAlign: "middle", marginTop: 0 }}
               />
             </div>
@@ -174,7 +191,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
-
-

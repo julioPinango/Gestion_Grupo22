@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
 import DocuPDF from "./DocuPDF";
+import "./Recordatorios.css";
 
 // Función para formatear la fecha
 const formatDate = (dateString) => {
@@ -15,6 +16,20 @@ const formatDate = (dateString) => {
 const Recordatorios = () => {
   const [transactions, setTransactions] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
+
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -47,10 +62,9 @@ const Recordatorios = () => {
   }, []);
 
   return (
-    <div className="text-center">
-      <div>
-        <Header href="/groups" />
-      </div>
+    <div className={`Recordatorios ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="text-center">
 
       {transactions && transactions.length > 0 ? (
         <div className="mt-5">
@@ -82,6 +96,7 @@ const Recordatorios = () => {
           </PDFDownloadLink>
         </div>
       )}
+      </div>
     </div>
   );
 };

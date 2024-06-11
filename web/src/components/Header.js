@@ -1,17 +1,20 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faCalendarDays, faUser, faBell } from "@fortawesome/free-solid-svg-icons";
+import "./Header.css";
+import lightmodenombre from "../img/lightmodenombre.png";
+import darkmodeNombre from "../img/darkmodenombre.png";
+import logo from "../img/LogoBillbuddy.png";
 
-import { faArrowRight, faCalendarDays,faUser } from "@fortawesome/free-solid-svg-icons"; // Importar faCalendarDays
-import {  faBell } from "@fortawesome/free-solid-svg-icons";
-
-
-const Header = () => {
+const Header = ({ toggleDarkMode, darkMode }) => {
+  const handleLogout = () => {
+    localStorage.removeItem("jwt-token");
+  };
+  const token = localStorage.getItem("jwt-token");
+  const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-
-  const token = localStorage.getItem("jwt-token");
-
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -39,140 +42,118 @@ const Header = () => {
     fetchNotifications();
   }, [token]);
 
-
-  const handleLogout = () => {
-    localStorage.removeItem("jwt-token");
-  };
-
-  const location = useLocation();
-
   return (
-    <header className="bg-dark text-light py-3">
-      <div className="container">
-        <div className="d-flex justify-content-between">
-          <h1 className="m-0">
-            <Link to="/" className="text-light text-decoration-none">
-              BillBuddy
-            </Link>
-          </h1>
+    <header className="header py-3">
+      <div className="container d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center">
+          <Link to="/" className="text-light text-decoration-none logo-container d-flex align-items-center">
+            <img src={logo} alt="Logo" className="logo" />
+            <img src={darkMode ? darkmodeNombre : lightmodenombre} alt="Nombre del Proyecto" className="nombre-img ml-2" />
+          </Link>
+        </div>
+        <nav className="nav nav-pills ml-auto d-flex align-items-center">
           {token ? (
-            <nav className="nav nav-pills">
-              <div>
-                <Link
-                  to="/profile"
-                className={`nav-item nav-link ${
-                  location.pathname === "/profile" ? "active" : ""
-                }`}
+            <>
+              <Link
+                to="/profile"
+                className={`nav-item nav-link ${location.pathname === "/profile" ? "active" : ""}`}
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </Link>
+              <Link
+                to="/recordatorios"
+                className={`nav-item nav-link ${location.pathname === "/recordatorios" ? "active" : ""}`}
+              >
+                <FontAwesomeIcon icon={faCalendarDays} />
+              </Link>
+              <div className="nav-item nav-link notification-container">
+                <div
+                  className={`notification-icon notifications-text ${showNotifications ? "active" : ""}`}
+                  onClick={() => {
+                    setShowNotifications(prevShowNotifications => !prevShowNotifications);
+                    if (showNotifications) {
+                      setNotifications([]);
+                    }
+                  }}
                 >
-                  <FontAwesomeIcon icon={faUser} /> {/* Utilizar el icono del calendario */}
-                </Link>
-              </div>
-              <div>
-                <Link
-                  to="/recordatorios"
-                className={`nav-item nav-link ${
-                  location.pathname === "/recordatorios" ? "active" : ""
-                }`}
-                >
-                  <FontAwesomeIcon icon={faCalendarDays} /> {/* Utilizar el icono del calendario */}
-                </Link>
-              </div>
-
-
-              <div className="container"></div>
-                <div>
-                  <Link
-                    className={`nav-item nav-link ${showNotifications ? "active" : ""}`}
-                    
-                    onClick={() => {
-                      setShowNotifications(prevShowNotifications => !prevShowNotifications);
-                      if (showNotifications) {
-                        setNotifications([]); 
-                      }
-                      }}
-                    > 
-                  
-                    <div style={{ position: "relative", display: "inline-block" }}>
-                      <FontAwesomeIcon icon={faBell} style={{ color: "white" }} />
-                      {notifications.length != 0 && (
-                        <span className="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                          <span className="visually-hidden">New alerts</span>
-                        </span>
-                      )}
-                    </div>
-
-                  </Link>
-                  {showNotifications && (
-                    <div className="popover" style={{ display: 'block' }}>
-                      <div className="arrow"></div>
-                      <h3 className="popover-header">Notifications</h3>
-                      <div className="popover-body">
-                        <ul className="list-group">
-                          {notifications.map((notification, index) => (
-                            
-                            <Link 
-                            to={`/groups/${notification.group_id}/transactions`} 
-                            style={{ textDecoration: 'none' }}
-                            >
-                            
-                            <li key={index} className="list-group-item">
-                              Recibiste {notification.amount} de {notification.from_username}.
-                              <br />
-                              En concepto de: {notification.description}
-                            </li>
-                            
-                            </Link>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+                  <FontAwesomeIcon icon={faBell} className={darkMode ? "dark-mode-icon" : ""} />
+                  {notifications.length !== 0 && (
+                    <span className="notification-badge">
+                      <span className="visually-hidden">New alerts</span>
+                    </span>
                   )}
                 </div>
-
+                {showNotifications && (
+                  <div className="popover" style={{ display: 'block' }}>
+                    <div className="arrow"></div>
+                    <h3 className="popover-header">Notifications</h3>
+                    <div className="popover-body">
+                      <ul className="list-group">
+                        {notifications.map((notification, index) => (
+                          <li key={index} className="list-group-item">
+                            Recibiste {notification.amount} de {notification.from_username}.
+                            <br />
+                            En concepto de: {notification.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Link
                 to="/groups"
-                className={`nav-item nav-link ${
-                  location.pathname === "/groups" && !showNotifications ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/groups" && !showNotifications ? "active" : ""}`}
               >
                 Grupos
               </Link>
               <Link
                 to="/transactions"
-                className={`nav-item nav-link ${
-                  location.pathname === "/transactions" && !showNotifications ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/transactions" && !showNotifications ? "active" : ""}`}
               >
                 Transacciones
               </Link>
               <Link
                 to="/deudas"
-                className={`nav-item nav-link ${
-                  location.pathname === "/deudas" && !showNotifications ? "active" : ""
-                }`}
+                className={`nav-item nav-link ${location.pathname === "/deudas" && !showNotifications ? "active" : ""}`}
               >
                 Deudas
               </Link>
-              <div>
-                <Link
-                  to="/"
-                  onClick={handleLogout}
-                  className={`nav-item nav-link ${
-                    location.pathname === "/" ? "active" : ""
-                  }`}
-                >
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    style={{ color: "white" }}
-                  />
-                </Link>
-              </div>
-            </nav>
-          ) : null}
-        </div>
+              <Link
+                to="/"
+                onClick={handleLogout}
+                className={`nav-item nav-link ${location.pathname === "/" ? "active" : ""}`}
+              >
+                <FontAwesomeIcon icon={faArrowRight} style={{ color: "white" }} />
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className={`nav-item nav-link ${location.pathname === "/login" ? "active" : ""}`}
+              >
+                Ingresar
+              </Link>
+              <Link
+                to="/register"
+                className={`nav-item nav-link ${location.pathname === "/register" ? "active" : ""}`}
+              >
+                Registrarme
+              </Link>
+            </>
+          )}
+          <button onClick={toggleDarkMode} className="toggle-dark-mode-btn">
+            {darkMode ? "Light Mode 🌞" : "Dark Mode 🌙"}
+          </button>
+        </nav>
       </div>
     </header>
   );
 };
 
 export default Header;
+
+
+
+

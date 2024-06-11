@@ -1,27 +1,87 @@
+/* Home.css */
+
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  text-align: center;
+}
+
+.light-mode {
+  background-color: #f0f0f0; /* Gris casi blanco */
+  color: #333333; /* Gris oscuro */
+}
+
+.dark-mode {
+  background-color: #000000; /* Negro */
+  color: #ffffff; /* Blanco */
+}
+
+.carousel-caption {
+  color: inherit;
+}
+
+/* Ajustes adicionales para otros elementos */
+.light-mode .carousel-control-prev-icon,
+.light-mode .carousel-control-next-icon {
+  filter: invert(0%);
+}
+
+.dark-mode .carousel-control-prev-icon,
+.dark-mode .carousel-control-next-icon {
+  filter: invert(100%);
+}
+
+/* Existing Home.css styles */
 .Home {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.header {
-  background-color: #00a200;
-  padding: 20px;
+/* Estilos adicionales para los botones en el header */
+.login-link:hover, .register-link:hover {
+  background-color: lightblue;
 }
 
-.body {
-  text-align: center;
+/* Estilos adicionales para las imágenes del carrusel */
+.custom-carousel img {
+  width: 100%;
+  height: auto;
 }
 
-.title {
-  margin: 0;
+/* Carousel.css */
+.custom-carousel {
+  max-width: 1000px; /* Cambia este valor según sea necesario */
+  margin: 0 auto; /* Centra el carrusel horizontalmente */
 }
 
-.footer {
-  background-color: darkgrey;
-  padding: 20px;
-  margin-top: auto;
-  text-align: center;
-  color:lightgrey;
-} 
+.custom-carousel img {
+  max-width: 100%;
+  height: auto;
+}
+
+.custom-carousel .carousel-item img {
+  max-height: 1000px; /* Cambia este valor según sea necesario */
+  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+}
+
+
+.btn:hover {
+  background-color: lightblue !important; /* Cambia el color de fondo al pasar el mouse sobre el botón */
+}
+
+.btn:hover + #container {
+  background-color: lightblue; /* Cambia el color del contenedor cuando se pasa el mouse sobre el botón */
+}
+
+/* Estilos CSS adicionales para el componente Header */
+
+.login-link:hover {
+  background-color: lightblue;
+}
+
+.register-link:hover {
+  background-color: lightblue;
+}
+
+
 
