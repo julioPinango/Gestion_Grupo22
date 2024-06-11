@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
@@ -12,6 +12,7 @@ function EditGroup() {
   const params = useParams();
   const navigate = useNavigate(); // useNavigate hook from react-router-dom
   const token = localStorage.getItem("jwt-token");
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   const editGroup = async () => {
     try {
@@ -37,12 +38,37 @@ function EditGroup() {
       }
 
       console.log(data);
+      //const groupId = data.groupId; //
+
+      // Redirect to the group page
       navigate(`/groups/${params.id}`);
     } catch (error) {
       console.error("Error editando el grupo:", error.message);
       alert("No se pudo editar el grupo: " + error.message);
     }
   };
+
+  const handleEditGroup = async (e) => {
+    if (name === "" || description === "") {
+      alert("Campos incompletos");
+      return;
+    }
+
+    e.preventDefault();
+    await editGroup();
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
 
   return (
     <div className={`EditGroup ${darkMode ? "dark-mode" : "light-mode"}`}>
