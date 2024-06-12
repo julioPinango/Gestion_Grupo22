@@ -53,7 +53,7 @@ function Dashboard() {
         <h2 className="text-center">Welcome to BillBuddy</h2>
         <h3 className="text-center mt-5">Mis grupos</h3>
         <div className="container text-left">
-          <table className="table table-dark">
+          <table className="table table-dark table table-striped table-bordered table-responsive" id="tabla">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -62,7 +62,7 @@ function Dashboard() {
                 <th scope="col">Acción</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="table-group-divider">
               {groups.map((group, index) => (
                 <tr key={index}>
                   <th scope="row">{index + 1}</th>

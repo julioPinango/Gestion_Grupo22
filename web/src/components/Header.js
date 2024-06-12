@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCalendarDays, faUser, faBell, faChartSimple } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket, faCalendarDays, faUser, faBell, faChartSimple } from "@fortawesome/free-solid-svg-icons";
+
 import "./Header.css";
 import lightmodenombre from "../img/lightmodenombre.png";
 import darkmodeNombre from "../img/darkmodenombre.png";
@@ -109,7 +110,7 @@ const Header = ({ toggleDarkMode, darkMode }) => {
               </div>
               <Link
                 to="/groups"
-                className={`nav-item nav-link ${location.pathname === "/groups" && !showNotifications ? "active" : ""}`}
+                className={`nav-item nav-link nav-fill ${location.pathname === "/groups" && !showNotifications ? "active" : ""}`}
               >
                 Grupos
               </Link>
@@ -129,8 +130,8 @@ const Header = ({ toggleDarkMode, darkMode }) => {
                 to="/"
                 onClick={handleLogout}
                 className={`nav-item nav-link ${location.pathname === "/" ? "active" : ""}`}
-              >
-                <FontAwesomeIcon icon={faArrowRight} style={{ color: "white" }} />
+              > 
+                <FontAwesomeIcon icon={faRightFromBracket} />
               </Link>
             </>
           ) : (

@@ -14,6 +14,7 @@ const Transactions = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
   const params = useParams();
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   const recurrenceOptions = ["Única vez", "Semanal", "Mensual"];
 
@@ -109,14 +110,26 @@ const Transactions = () => {
     await editTransaction();
   };
 
+    const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
+
   return (
-    <div className="text-center">
+    <div className={`Dashboard ${darkMode ? "dark-mode" : "light-mode"}`}>
       <div>
-        <Header href="/groups" />
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
 
       <div className="table-responsive mt-5">
-        <table className="table table-striped table-sm">
+        <table className="table table-dark table table-striped table-bordered table-responsive">
           <thead>
             <tr>
               <th scope="col">#</th>

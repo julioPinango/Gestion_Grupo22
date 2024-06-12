@@ -6,6 +6,7 @@ import { decodeToken } from "react-jwt";
 import GenericModal from "../components/GenericModal";
 import Calendar from "react-calendar"; 
 import { Link, useLocation } from "react-router-dom";
+import "./Group.css";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
@@ -333,12 +334,15 @@ const Group = () => {
     getBalance();
   }, [params.id]);
 
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
 
 
   return (
     <div className={`Group ${darkMode ? "dark-mode" : "light-mode"}`}>
       <div>
-        <Header href="/groups" darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
 
       <div className="container mt-5 mb-5">
@@ -366,44 +370,48 @@ const Group = () => {
       </p>
     </div>
 
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={openExpenseModal}
-      >
-        Agregar gasto
-      </button>
+    <div className="button-group">
+  <button
+    type="button"
+    className="btn btn-primary"
+    onClick={openExpenseModal}
+  >
+    Agregar gasto
+  </button>
 
-      {isAdmin && (
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={openAddUserModal}
-        >
-          Agregar miembro
-        </button>
-      )}
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => navigate('transactions')}
-      >
-        Ver transacciones
-      </button>
-      <div className="table table-sm">
-        <table className="table table-sm">
+  {isAdmin && (
+    <button
+      type="button"
+      className="btn btn-primary"
+      onClick={openAddUserModal}
+    >
+      Agregar miembro
+    </button>
+  )}
+  <button
+    type="button"
+    className="btn btn-primary"
+    onClick={() => navigate('transactions')}
+  >
+    Ver transacciones
+  </button>
+</div>
+
+      <p></p>
+      <div className="table table-dark table-striped table-responsive">
+        <table className="table table-dark table-striped table-bordered">
           <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Apellido</th>
-              <th scope="col">Nombre de usuario</th>
-              <th scope="col">Acciones</th>
+              <th class="table-dark" scope="col">#</th>
+              <th class="table-dark" scope="col">Nombre</th>
+              <th class="table-dark" scope="col">Apellido</th>
+              <th class="table-dark" scope="col">Nombre de usuario</th>
+              <th class="table-dark" scope="col">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table-group-divider">
             {users ? users.map((user1, index) => (
-              <tr key={index}>
+              <tr class="table-primary table-bordered" key={index}>
                 <th scope="row">{index}</th>
                 <td>{user1.name}</td>
                 <td>{user1.lastname}</td>
@@ -415,7 +423,7 @@ const Group = () => {
                       className="btn btn-danger"
                       onClick={() => handleDelete(user1.username)}
                     >
-                      Eliminar participante
+                      🗑️ Eliminar participante
                     </button>
                   )}
                 </td>
@@ -430,21 +438,7 @@ const Group = () => {
           {alertMessage}
         </div>
       )}
-
-      {/*
-      <GenericModal
-        showModal={showModal}
-        handleClose={closeModal}
-        title="Eliminar miembro del grupo"
-        bodyText={`¿Desea eliminar el miembro "${selectedMember?.username}" del grupo?`}
-        confirmText="Eliminar"
-        confirmAction={() => handleDelete(selectedMember?.username)}
-        confirmButtonClass="btn-danger"
-      />
-    */}
-
-      {/* Modal para asignar gasto */}
-      <div
+       <div
         className={`modal fade ${showExpenseModal ? "show" : ""}`}
         id="expenseModal"
         tabIndex="-1"
@@ -452,11 +446,11 @@ const Group = () => {
         aria-hidden="true"
         style={{ display: showExpenseModal ? "block" : "none" }}
       >
-        <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="expenseModalLabel">
-                Agregar gasto
+                Agregar gasto:
               </h5>
               <button
                 type="button"
@@ -469,7 +463,7 @@ const Group = () => {
               <form onSubmit={handleAddExpense}>
                 <div className="mb-3">
                   <label htmlFor="amount" className="form-label">
-                    De parte de
+                    De parte de:
                   </label>
                   <input
                     type="text"
@@ -481,7 +475,7 @@ const Group = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="participants" className="form-label">
-                    Destinatarios
+                    Destinatarios:
                   </label>
                   <div>
                     {users ? users.map((user, index) => (
@@ -506,7 +500,7 @@ const Group = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="amount" className="form-label">
-                    Monto
+                    Monto:
                   </label>
                   <input
                     type="number"
@@ -518,7 +512,7 @@ const Group = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="description" className="form-label">
-                    Descripción
+                    Descripción:
                   </label>
                   <textarea
                     className="form-control"
@@ -547,7 +541,7 @@ const Group = () => {
     </div>
                 <div className="mb-3">
                   <label htmlFor="recurrence" className="form-label">
-                    Recurrencia
+                    Recurrencia:
                   </label>
                   <div>
                     <div className="form-check">
@@ -616,6 +610,7 @@ const Group = () => {
           </div>
         </div>
       </div>
+
 
       <div
         className={`modal fade ${showAddUserModal ? "show" : ""}`}
