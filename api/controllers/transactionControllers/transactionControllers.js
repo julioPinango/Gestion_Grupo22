@@ -104,9 +104,12 @@ const getTransactions = async (req, res) => {
 
         const query = {
             text: `
-            SELECT *
+            SELECT t.id as id, t.group_id as group_id, t.payer as payer, t.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate, t.category as category,
+                array_agg(d.debtor) as debtors
             FROM transactions t
-            WHERE t.group_id = $1`,
+            LEFT JOIN debtors d ON t.id = d.transaction_id
+            WHERE t.group_id = $1
+            GROUP BY t.id`,
             values: [groupId]
         };
 

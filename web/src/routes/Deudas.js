@@ -63,11 +63,20 @@ const Deudas = () => {
         throw new Error("Error en el servidor");
       }
 
-      setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
+      const updatedTransactions = transactions.map(transaction => {
+        if (transaction.id === transactionId) {
+          // Actualizar el monto de la transacción
+          return {
+            ...transaction,
+            amount: transaction.amount - partialAmount
+          };
+        }
+        return transaction;
+      });
+
+      setTransactions(updatedTransactions);
       setShowModal(false);
     } catch (error) {
-      const { group_id, payer, transactionId, partialAmount } = debtInfo;
-        console.log(group_id, payer, transactionId, partialAmount);
       console.error("Error editando la transacción:", error.message);
       alert("No se pudo editar la transacción: " + error.message);
     }
