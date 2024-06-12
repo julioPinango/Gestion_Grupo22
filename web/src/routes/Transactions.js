@@ -5,6 +5,9 @@ import Header from "../components/Header";
 import DocuPDF from "./DocuPDF";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import FacturaPDF from './FacturaPDF'
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -138,6 +141,7 @@ const Transactions = () => {
               <th scope="col">De</th>
               <th scope="col">Hacia</th>
               <th scope="col">Acciones</th>
+              <th scope="col">Factura</th>
             </tr>
           </thead>
           <tbody>
@@ -158,6 +162,22 @@ const Transactions = () => {
                       Editar transacción
                     </button>
                   </td>
+                  <td> 
+                    <div>
+                      <PDFDownloadLink
+                        document={<FacturaPDF 
+                          payer={transaction.payer} 
+                          amount={transaction.amount} 
+                          description={transaction.description} 
+                          date={transaction.selecteddate} 
+                        />}
+                        fileName="transactions.pdf"
+                      >
+                        <FontAwesomeIcon icon={faFilePdf} />
+                      </PDFDownloadLink>
+                    </div>
+                  </td>
+
                 </tr>
               ))
             ) : (
