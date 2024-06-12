@@ -18,6 +18,7 @@ import EditTransaction from "./routes/EditTransaction";
 import MyTransactions from "./routes/MyTransactions";
 import Recordatorios from "./routes/Recordatorios";
 import Profile from "./routes/Profile";
+import Charts from "./routes/Charts";
 
 const getAccessToken = () =>{
   return localStorage.getItem('jwt-token')
@@ -93,7 +94,11 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
-      }
+      },
+      {
+        path: "/charts",
+        element: <Charts />,
+      },
     ]
   }
 ]);
