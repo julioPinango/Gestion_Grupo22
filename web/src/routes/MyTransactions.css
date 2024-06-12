@@ -64,4 +64,13 @@ body {
     background-color: #138496;
     border-color: #117a8b;
   }
+  .charts-container {
+    display: flex;
+    justify-content: center;
+  }
   
+  .pie-chart,
+  .bar-chart {
+    width: 75%; /* Ajusta el ancho según tus necesidades */
+    margin: 0 10px; /* Agrega un espacio entre los gráficos */
+  }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightFromBracket, faCalendarDays, faUser, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket, faCalendarDays, faUser, faBell, faChartSimple } from "@fortawesome/free-solid-svg-icons";
+
 import "./Header.css";
 import lightmodenombre from "../img/lightmodenombre.png";
 import darkmodeNombre from "../img/darkmodenombre.png";
@@ -65,6 +66,12 @@ const Header = ({ toggleDarkMode, darkMode }) => {
                 className={`nav-item nav-link ${location.pathname === "/recordatorios" ? "active" : ""}`}
               >
                 <FontAwesomeIcon icon={faCalendarDays} />
+              </Link>
+              <Link
+                to="/charts"
+                className={`nav-item nav-link ${location.pathname === "/charts" ? "active" : ""}`}
+              >
+                <FontAwesomeIcon icon={faChartSimple} />
               </Link>
               <div className="nav-item nav-link notification-container">
                 <div
