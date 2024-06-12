@@ -10,6 +10,13 @@ const Charts = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
 
+  const categoryMap = {
+    1: "Gasto general",
+    2: "Recreación",
+    3: "Servicio",
+    4: "Transporte"
+  };
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -52,7 +59,7 @@ const Charts = () => {
       const categoryCounts = {};
       transactions.forEach(transaction => {
         const category = transaction.category;
-        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        categoryCounts[categoryMap[category]] = (categoryCounts[categoryMap[category]] || 0) + 1;
       });
       const data = Object.entries(categoryCounts).map(([category, count]) => [category, count]);
       setCategoryData([["Categoría", "Cantidad de operaciones"], ...data]);

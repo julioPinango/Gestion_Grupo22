@@ -34,7 +34,7 @@ const Recordatorios = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/mytransactions", {
+        const response = await fetch("http://localhost:3001/transactions/debtor", {
           headers: {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),

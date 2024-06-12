@@ -163,7 +163,7 @@ const MyTransactions = () => {
                 <th scope="col">Grupo</th>
                 <th scope="col">Monto</th>
                 <th scope="col">Descripción</th>
-                <th scope="col">Prestador</th>
+                <th scope="col">Pagadores</th>
               </tr>
             </thead>
             <tbody>

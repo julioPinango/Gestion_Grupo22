@@ -24,7 +24,7 @@ const Transactions = () => {
   const fetchTransactions = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3001/transactions/payer',
+      `http://localhost:3001/groups/${params.id}/transactions`,
         {
           method: "GET",
           headers: {
@@ -138,8 +138,8 @@ const Transactions = () => {
               <th scope="col">#</th>
               <th scope="col">Monto</th>
               <th scope="col">Descripción</th>
-              <th scope="col">De</th>
-              <th scope="col">Hacia</th>
+              <th scope="col">Pagadores</th>
+              <th scope="col">Deudores</th>
               <th scope="col">Acciones</th>
               <th scope="col">Factura</th>
             </tr>
@@ -151,8 +151,8 @@ const Transactions = () => {
                   <th scope="row">{index}</th>
                   <td>{transaction.amount}</td>
                   <td>{transaction.description}</td>
-                  <td>{transaction.from_username}</td>
-                  <td>{transaction.to_username}</td>
+                  <td>{transaction.payer}</td>
+                  <td>{transaction.debtors.join(', ')}</td>
                   <td>
                     <button
                       type="button"
