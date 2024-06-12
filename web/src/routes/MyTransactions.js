@@ -156,7 +156,7 @@ const MyTransactions = () => {
       </div>
       {transactions && transactions.length > 0 ? (
         <div className="table-responsive mt-5">
-          <table className="table table-striped table-sm">
+          <table className="table table-dark table table-striped table-bordered table-responsives">
             <thead>
               <tr>
                 <th scope="col">#</th>

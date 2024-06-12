@@ -73,8 +73,24 @@
   color: #ffffff;
 }
 
-.popover{
-  color:#000000
+.notification-container {
+  position: relative;
+}
+
+.popover {
+  position: absolute;
+  color:#000000;
+  top: 100%; /* Posiciónalo justo debajo del ícono de notificaciones */
+  right: 0; /* O ajusta según donde quieras que aparezca */
+  z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+  display: none; /* Inicialmente oculto */
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popover.active {
+  display: block;
 }
 
 .dark-mode .nav-pills .nav-link.active {

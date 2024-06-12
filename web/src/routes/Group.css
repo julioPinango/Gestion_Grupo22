@@ -1,9 +1,10 @@
 /* Estilos comunes */
-
 .Group {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin: 0 auto; /* Margen centrado */
+  padding: 20px; /* Relleno común */
 }
 
 .flex-grow-1 {
@@ -11,7 +12,7 @@
 }
 
 /* Estilos para el modo claro */
-.light-mode .Group {
+.light-mode {
   background-color: #ffffff;
   color: #000000;
 }
@@ -20,14 +21,63 @@
   background-color: #f8f9fa;
 }
 
+.light-mode .modal-content {
+  background: black !important;
+  color: white !important;
+}
+
+.light-mode .btn-primary {
+  background-color: blue;
+  color: white;
+}
+
+.light-mode .btn-danger {
+  background-color: red;
+  color: white;
+}
+
+.light-mode .btn-secondary {
+  background-color: gray;
+  color: white;
+}
+
+.light-mode .Group {
+  background-image: url('../img/lightmodefondo1.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+}
+
 /* Estilos para el modo oscuro */
-.dark-mode .Group {
+.dark-mode {
   background-color: #121212;
   color: #ffffff;
 }
 
 .dark-mode .navbar-dark {
   background-color: #343a40;
+}
+
+.dark-mode .modal-content {
+  background: black !important;
+  color: white !important;
+}
+
+.dark-mode .btn-primary {
+  background-color: #1e88e5;
+}
+
+.dark-mode .btn-danger {
+  background-color: #e53935;
+}
+
+.dark-mode .btn-secondary {
+  background-color: #757575;
+}
+
+.dark-mode .Group {
+  background-image: url('../img/darkmodefondo1.jpg');
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 /* Otros estilos necesarios */
@@ -42,97 +92,34 @@
   align-items: center;
   justify-content: center;
 }
-.Group {
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .btn-primary {
-    margin: 5px;
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-  }
-  
-  /* Modo claro */
-  
-  .light-mode {
-    background-color: white;
-    color: black;
-  }
-  
-  .light-mode .modal-content {
-    background: white;
-    color: black;
-  }
-  
-  .light-mode .btn-primary {
-    background-color: blue;
-    color: white;
-  }
-  
-  .light-mode .btn-danger {
-    background-color: red;
-    color: white;
-  }
-  
-  .light-mode .btn-secondary {
-    background-color: gray;
-    color: white;
-  }
-  
-  /* Modo oscuro */
-  
-  .dark-mode {
-    background-color: #121212;
-    color: white;
-  }
-  
-  .dark-mode .modal-content {
-    background: #333;
-    color: white;
-  }
-  
-  .dark-mode .btn-primary {
-    background-color: #1e88e5;
-    color: white;
-  }
-  
-  .dark-mode .btn-danger {
-    background-color: #e53935;
-    color: white;
-  }
-  
-  .dark-mode .btn-secondary {
-    background-color: #757575;
-    color: white;
-  }
 
-  .light-mode .Group {
-    background-image: url('../img/lightmodefondo1.jpg');
-    background-size: cover;
-    background-attachment: fixed;
-  }
-  
-  .dark-mode .Group {
-    background-image: url('../img/darkmodefondo1.jpg');
-    background-size: cover;
-    background-attachment: fixed;
-  }
-  
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: black !important; /* Fondo negro */
+  color: white !important; /* Texto blanco */
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* Estilos para el grupo de botones */
+.button-group {
+  display: flex;
+  justify-content: space-between; /* Espacio entre botones */
+  gap: 10px; /* Separación entre botones */
+}
+
+.button-group .btn {
+  flex: 1; /* Opcional: Ajusta este valor para que los botones tengan el mismo ancho */
+}
