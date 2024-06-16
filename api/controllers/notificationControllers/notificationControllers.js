@@ -1,4 +1,5 @@
 const { client } = require('../../utils/constants');
+const { _getMembers } = require('../memberControllers/memberControllers');
 
 const getNotifications = async (req, res) => {
     try {
@@ -36,7 +37,30 @@ const pushNotification = async (groupId, from, to, amount, description, recurren
     }
 };
 
+const notifyGroup = async (groupId, from, amount, description) => {
+    try {
+        members = await _getMembers(groupId)
+        for (let i = 0; i < members.length; i++) {
+
+            if (members[i].username != from) {
+
+                const query = {
+                    text: `INSERT INTO notifications (group_id, from_username, to_username, amount, description) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+                    values: [groupId, from, members[i].username, amount, description]
+                };
+                result = await client.query(query);
+            }
+        }
+        return true
+    } catch (error) {
+        console.error("Error al pushear notificacion:", error);
+        return false;
+    }
+};
 
 
 
-module.exports = { getNotifications, pushNotification };
+
+
+
+module.exports = { getNotifications, pushNotification, notifyGroup };

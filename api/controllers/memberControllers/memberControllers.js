@@ -45,6 +45,26 @@ const getMembers = async (req, res) => {
     }
 };
 
+const _getMembers = async (groupId) => {
+    try {
+
+        const query = {
+            text: `
+            SELECT username
+            FROM members
+            WHERE group_id = $1`,
+            values: [groupId]
+        };
+
+        result = await client.query(query);
+
+        return result.rows;
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error en el servidor");
+    }
+};
+
 const addMember = async (req, res) => {
     try {
         const groupId = req.params.group_id;
@@ -103,4 +123,4 @@ const deleteMember = async (req, res) => {
     }
 };
 
-module.exports = { getMembers, addMember, deleteMember, isMember };
+module.exports = { getMembers, addMember, deleteMember, isMember, _getMembers };

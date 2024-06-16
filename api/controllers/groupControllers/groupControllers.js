@@ -3,12 +3,12 @@ const { isMember } = require("../memberControllers/memberControllers");
 
 const createGroup = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, objetive } = req.body;
         const admin = req.user.username;
 
         const groupQuery = {
-            text: `INSERT INTO groups (name, description, admin) VALUES ($1, $2, $3) RETURNING id`,
-            values: [name, description, admin]
+            text: `INSERT INTO groups (name, description, admin, objetive) VALUES ($1, $2, $3, $4) RETURNING id`,
+            values: [name, description, admin, objetive]
         };
 
         const groupResult = await client.query(groupQuery);
@@ -33,7 +33,7 @@ const getGroups = async (req, res) => {
 
         const query = {
             text: `
-            SELECT g.id, g.name, g.description
+            SELECT g.id, g.name, g.description, g.objetive
             FROM groups g
             INNER JOIN members m ON g.id = m.group_id
             WHERE m.username = $1`,
@@ -60,7 +60,7 @@ const getGroup = async (req, res) => {
 
         const query = {
             text: `
-            SELECT g.id, g.name, g.description
+            SELECT g.id, g.name, g.description, g.objetive
             FROM groups g
             INNER JOIN members m ON g.id = m.group_id
             WHERE m.username = $1
@@ -85,6 +85,7 @@ const updateGroup = async (req, res) => {
         const {
             name,
             description,
+            objetive
         } = req.body;
 
         const existingGroup = await client.query('SELECT * FROM groups WHERE id = $1 AND admin = $2', [groupId, username]);
@@ -92,17 +93,23 @@ const updateGroup = async (req, res) => {
             console.error('Error in update: group not found');
             return res.status(404).json({ message: 'group not found' });
         }
+        if (objetive && existingGroup.rows[0].objetive == null) {
+            console.error('Error in update: change type');
+            return res.status(404).json({ message: 'Cannot change the group type.' });
+        }
 
         const updateFields = {
             name: name || existingGroup.rows[0].name,
             description: description || existingGroup.rows[0].description,
+            objetive: objetive || existingGroup.rows[0].objetive,
         };
 
         const result = await client.query(
-            'UPDATE groups SET name = $1, description = $2 WHERE id = $3',
+            'UPDATE groups SET name = $1, description = $2, objetive = $3 WHERE id = $4',
             [
                 updateFields.name,
                 updateFields.description,
+                updateFields.objetive,
                 groupId,
             ]
         );
