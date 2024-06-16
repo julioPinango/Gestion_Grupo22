@@ -7,7 +7,7 @@ const createGroup = async (req, res) => {
         const admin = req.user.username;
 
         const groupQuery = {
-            text: `INSERT INTO groups (name, description, admin, objetive) VALUES ($1, $2, $3, $4) RETURNING id`,
+            text: `INSERT INTO groups (name, description, admin, objetive, savings) VALUES ($1, $2, $3, $4, 0) RETURNING id`,
             values: [name, description, admin, objetive]
         };
 

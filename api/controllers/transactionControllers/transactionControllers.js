@@ -17,10 +17,13 @@ const addTransaction = async (req, res) => {
             console.error("Error at adding transaction: Payer not a member.");
             return res.status(401).json({ message: 'Payer not a member.' });
         }
-        for (let i = 0; i < participants.length; i++) {
-            if (!await isMember(groupId, participants[i])) {
-                console.error("Error at adding transaction: Participant not a member.");
-                return res.status(401).json({ message: 'Participant not a member.' });
+        if (participants) {
+
+            for (let i = 0; i < participants.length; i++) {
+                if (!await isMember(groupId, participants[i])) {
+                    console.error("Error at adding transaction: Participant not a member.");
+                    return res.status(401).json({ message: 'Participant not a member.' });
+                }
             }
         }
         if (amount <= 0) {
@@ -39,7 +42,7 @@ const addTransaction = async (req, res) => {
                 await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
             }
         } else { //it's a saving
-            await _updateGroupSavings(groupId, from, amount, description)
+            await _updateGroupSavings(groupId, payer, amount, description)
         }
 
 
