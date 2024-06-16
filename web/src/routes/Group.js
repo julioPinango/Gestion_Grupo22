@@ -31,7 +31,9 @@ const Group = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
-
+  const [objetive, setObjetive] = useState(null);
+  const [isCollaboration, setIsCollaboration] = useState(false);
+  
   const toggleCalendar = () => {
     setCalendarVisible(!calendarVisible);
   };
@@ -162,6 +164,35 @@ const Group = () => {
     }
   };
 
+  const handleAddSaving = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/groups/${params.id}/transactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+          body: JSON.stringify({ payer, amount, description}),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      setShowExpenseModal(false);
+      setAmount(0);
+      fetchGroup();
+    } catch (error) {
+      console.error("Failed to add expense:", error.message);
+      alert("Failed to add expense: " + error.message);
+    }
+  };
   const handleAddExpense = async (e) => {
     e.preventDefault();
 
@@ -259,6 +290,8 @@ const Group = () => {
           let name = responseData.group.name.charAt(0).toUpperCase() + responseData.group.name.slice(1);
           setGroupName(name);
           setGroupDescription(responseData.group.description);
+          setObjetive(responseData.group.objetive);
+          
         }
       } catch (error) {
         console.error("Error fetching group info:", error);
@@ -279,6 +312,10 @@ const Group = () => {
   };
 
   const openExpenseModal = () => {
+    setIsCollaboration(objetive !== null && objetive > 0);
+    if (objetive !== null && objetive > 0) {
+      setPayer(getLoggedUser());
+    }
     setShowExpenseModal(true);
   };
 
@@ -338,7 +375,23 @@ const Group = () => {
     document.body.className = darkMode ? 'dark-mode' : 'light-mode';
   }, [darkMode]);
 
+  const getLoggedUser = () => {
+    const token = localStorage.getItem("jwt-token");
 
+    if (token) {
+      try {
+        const decodedToken = decodeToken(token);
+        return decodedToken.username; // Suponiendo que el token contiene el nombre de usuario como parte de los datos
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        return null; // Manejar el error según sea necesario
+      }
+    } else {
+      return null; // Manejar el caso en el que no haya token almacenado (usuario no autenticado)
+    }
+  };
+
+  const loggedUser = getLoggedUser();
   return (
     <div className={`Group ${darkMode ? "dark-mode" : "light-mode"}`}>
       <div>
@@ -370,14 +423,24 @@ const Group = () => {
       </p>
     </div>
 
-    <div className="button-group">
-  <button
-    type="button"
-    className="btn btn-primary"
-    onClick={openExpenseModal}
-  >
-    Agregar gasto
-  </button>
+        <div className="button-group">
+        {objetive !== null && objetive > 0 ? (
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={openExpenseModal}
+          >
+            Colaborar 
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={openExpenseModal}
+          >
+            Agregar gasto
+          </button>
+        )}
 
   {isAdmin && (
     <button
@@ -450,7 +513,7 @@ const Group = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="expenseModalLabel">
-                Agregar gasto:
+              {isCollaboration ? "Colaborar" : "Agregar gasto"}
               </h5>
               <button
                 type="button"
@@ -460,8 +523,53 @@ const Group = () => {
               ></button>
             </div>
             <div className="modal-body">
-              <form onSubmit={handleAddExpense}>
+            <form onSubmit={isCollaboration ? handleAddSaving : handleAddExpense}>
+                {isCollaboration ? (
+                  <>
+                  <div className="mb-3">
+                  <label htmlFor="amount" className="form-label">
+                    De parte de:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="amount"
+                    value={payer}
+                    readOnly
+                    onChange={(e) => setPayer(e.target.value)}
+                  />
+                </div>
+                  <div className="mb-3">
+                  <label htmlFor="amount" className="form-label">
+                    Monto:
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </div>
                 <div className="mb-3">
+                  <label htmlFor="description" className="form-label">
+                    Descripción:
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="description"
+                    rows="3"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">
+                  Agregar
+                </button>
+                    </>
+  ):(
+<>
+                  <div className="mb-3">
                   <label htmlFor="amount" className="form-label">
                     De parte de:
                   </label>
@@ -508,7 +616,7 @@ const Group = () => {
                     id="amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                  />
+                    />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="description" className="form-label">
@@ -594,7 +702,7 @@ const Group = () => {
               id="category"
               value={category}
               onChange={(e) => setCategory(parseInt(e.target.value))}
-            >
+              >
               <option value={1}>Gasto general</option>
               <option value={2}>Recreación</option>
               <option value={3}>Servicio</option>
@@ -605,6 +713,8 @@ const Group = () => {
                 <button type="submit" className="btn btn-primary">
                   Agregar
                 </button>
+            </>
+            )}
               </form>
             </div>
           </div>
