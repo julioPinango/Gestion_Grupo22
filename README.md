@@ -59,6 +59,16 @@ A website that helps people keep track of shared expenses and split bills with f
 }
 ```
 
+### Create saving group
+**POST** /groups
+
+```
+{
+  "name": "Grupo 22",
+  "description": "Grupo de gestion nro 22. 1C2024",
+  "objetive": 10000
+}
+```
 
 ### Get groups
 **GET** /groups
@@ -111,6 +121,16 @@ A website that helps people keep track of shared expenses and split bills with f
   "description": "Bus tickets",
   "invoices": binary,
   "category": 3
+}
+```
+
+### Add saving transaction (no participants field)
+**POST** /groups/{group_id}/transactions
+```
+{
+  "amount": 100,
+  "payer": "avilagaston",
+  "description": "Bus tickets",
 }
 ```
 

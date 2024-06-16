@@ -1,21 +1,13 @@
 const { client } = require('../../utils/constants');
 const { updateBalances } = require('../balanceControllers/balanceControllers');
 const { isMember } = require("../memberControllers/memberControllers");
-const { pushNotification } = require('../notificationControllers/notificationControllers');
+const { pushNotification, notifyGroup } = require('../notificationControllers/notificationControllers');
 
 const addTransaction = async (req, res) => {
     try {
         const groupId = req.params.group_id;
         const username = req.user.username;
-        const amount = req.body.amount;
-        const participants = req.body.participants;
-        const payer = req.body.payer;
-        const description = req.body.description;
-        const recurrence = req.body.recurrence;
-        const selecteddate = req.body.selectedDate;
-        const invoice = req.body.invoice;
-        const category = req.body.category;
-
+        const { amount, participants, payer, description, recurrence, selectedDate, invoice, category } = req.body;
 
         if (!await isMember(groupId, username)) {
             console.error("Error at adding transaction: Not a member.");
@@ -25,10 +17,13 @@ const addTransaction = async (req, res) => {
             console.error("Error at adding transaction: Payer not a member.");
             return res.status(401).json({ message: 'Payer not a member.' });
         }
-        for (let i = 0; i < participants.length; i++) {
-            if (!await isMember(groupId, participants[i])) {
-                console.error("Error at adding transaction: Participant not a member.");
-                return res.status(401).json({ message: 'Participant not a member.' });
+        if (participants) {
+
+            for (let i = 0; i < participants.length; i++) {
+                if (!await isMember(groupId, participants[i])) {
+                    console.error("Error at adding transaction: Participant not a member.");
+                    return res.status(401).json({ message: 'Participant not a member.' });
+                }
             }
         }
         if (amount <= 0) {
@@ -36,15 +31,20 @@ const addTransaction = async (req, res) => {
             return res.status(401).json({ message: 'Invalid amount.' });
         }
 
-        const transactionId = await _createTransaction(groupId, payer, amount, description, recurrence, invoice, selecteddate, category)
+        const transactionId = await _createTransaction(groupId, payer, amount, description, recurrence, invoice, selectedDate, category)
 
-        for (let i = 0; i < participants.length; i++) { // TODO: handle errors
-            if (payer == participants[i]) {
-                continue
+        if (participants) {
+            for (let i = 0; i < participants.length; i++) { // TODO: handle errors
+                if (payer == participants[i]) {
+                    continue
+                }
+
+                await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
             }
-
-            await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
+        } else { //it's a saving
+            await _updateGroupSavings(groupId, payer, amount, description)
         }
+
 
         res.status(200).json({ message: 'Transaction added' });
     } catch (error) {
@@ -88,6 +88,31 @@ const _addDebtor = async (transactionId, to, amount, from, groupId, description,
         await pushNotification(groupId, from, to, amount, description, recurrence)
     } catch (error) {
         console.error("Error al obtener los datos:", error);
+    }
+};
+
+const _updateGroupSavings = async (groupId, from, amount, description) => {
+
+    try {
+        const result = await client.query(
+            'UPDATE groups SET savings = savings + $1 WHERE id = $2',
+            [
+                amount,
+                groupId
+            ]
+        );
+
+        if (result.rowCount === 0) {
+            console.error('Error in update: group information not updated');
+            return false;
+        }
+        await updateBalances(amount, groupId, from)
+
+        return await notifyGroup(groupId, from, amount, description)
+
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        return false;
     }
 };
 
