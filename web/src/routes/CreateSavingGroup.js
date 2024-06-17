@@ -5,9 +5,10 @@ import Button from "../components/Button";
 import Footer from "../components/Footer";
 import "./CreateGroup.css";
 
-function CreateGroup() {
+function CreateSavingGroup() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [objetive, setObjetive] = useState(0);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function CreateGroup() {
         body: JSON.stringify({
           name,
           description,
+          objetive
         }),
       });
 
@@ -81,6 +83,12 @@ function CreateGroup() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <label>Objetivo</label>
+          <input
+            type="number"
+            value={objetive}
+            onChange={(e) => setObjetive(e.target.value)}
+          />
           <div className="text-center mt-5">
             <Button text="Crear grupo" />
           </div>
@@ -91,4 +99,4 @@ function CreateGroup() {
   );
 }
 
-export default CreateGroup;
+export default CreateSavingGroup;

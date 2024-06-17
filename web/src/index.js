@@ -19,6 +19,7 @@ import MyTransactions from "./routes/MyTransactions";
 import Recordatorios from "./routes/Recordatorios";
 import Profile from "./routes/Profile";
 import Charts from "./routes/Charts";
+import CreateSavingGroup from "./routes/CreateSavingGroup";
 
 const getAccessToken = () =>{
   return localStorage.getItem('jwt-token')
@@ -98,6 +99,10 @@ const router = createBrowserRouter([
       {
         path: "/charts",
         element: <Charts />,
+      },
+      {
+        path: "/groups/savinggroup",
+        element: <CreateSavingGroup />,
       },
     ]
   }

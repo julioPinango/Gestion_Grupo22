@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
-
+import { Link } from "react-router-dom";
 function Dashboard() {
   const [groups, setGroups] = useState([]);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
@@ -82,11 +82,25 @@ function Dashboard() {
               ))}
             </tbody>
           </table>
+          {/*
           <div className="d-flex justify-content-end mt-5">
             <a href="/group/create" className="btn btn-primary">
               Crear grupo
             </a>
           </div>
+            */}
+          <Link
+                to="/group/create"
+                className={'btn btn-primary'}
+              >
+                Crear grupo de gastos
+              </Link>
+          <Link
+                to="/groups/savinggroup"
+                className={'btn btn-primary'}
+              >
+                Crear grupo de ahorro
+              </Link>
         </div>
       </div>
       <Footer />
