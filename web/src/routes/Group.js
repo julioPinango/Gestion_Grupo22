@@ -8,6 +8,7 @@ import Calendar from "react-calendar";
 import { Link, useLocation } from "react-router-dom";
 import "./Group.css";
 
+
 const Group = () => {
   const [users, setUsers] = useState([]);
   const [usuarioAAgregar, setUsuarioAAgregar] = useState("");
@@ -166,7 +167,8 @@ const Group = () => {
 
   const handleAddSaving = async (e) => {
     e.preventDefault();
-
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString();
     try {
       const response = await fetch(
         `http://localhost:3001/groups/${params.id}/transactions`,
@@ -176,7 +178,7 @@ const Group = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ payer, amount, description}),
+          body: JSON.stringify({ payer, amount, description, selectedDate: formattedDate}),
         }
       );
 
@@ -193,6 +195,7 @@ const Group = () => {
       alert("Failed to add expense: " + error.message);
     }
   };
+
   const handleAddExpense = async (e) => {
     e.preventDefault();
 
