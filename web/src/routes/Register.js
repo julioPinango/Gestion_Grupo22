@@ -5,8 +5,10 @@ import Button from '../components/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./Register.css"; 
+import {  useNavigate } from 'react-router-dom'; 
 
 export default function Register() {
+  const navigate= useNavigate();
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
@@ -47,7 +49,13 @@ export default function Register() {
         throw new Error(errorData.message);
       }
 
-      window.location.href = "/groups";
+      const data = await response.json();
+      if (data.jwt !== null) {
+        localStorage.setItem("jwt-token", data.jwt);
+        navigate('/groups'); 
+      } else {
+        alert(data.message);
+      }
 
     } catch (error) {
       console.error('Error creating user:', error.message);

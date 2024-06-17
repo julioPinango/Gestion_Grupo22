@@ -3,33 +3,44 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare, faEye } from "@fortawesome/free-solid-svg-icons";
+import CreateGroupModal from "./CreateGroupModal";
+import CreateSavingGroupModal from "./CreateSavingGroupModal";
+
 function Dashboard() {
   const [groups, setGroups] = useState([]);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const navigate = useNavigate();
+  const location = useLocation();
+  const [showExpenseModal, setShowExpenseModal] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [isCreateSavingGroupModalOpen, setIsCreateSavingGroupModalOpen] = useState(false);
+
+  const fetchGroups = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/groups", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("jwt-token"),
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch groups");
+      }
+
+      const data = await response.json();
+      setGroups(data.Groups);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/groups", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("jwt-token"),
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-
-        const data = await response.json();
-        setGroups(data.Groups);
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchGroups();
   }, []);
 
@@ -45,6 +56,65 @@ function Dashboard() {
     document.body.className = darkMode ? 'dark-mode' : 'light-mode';
   }, [darkMode]);
 
+  const handleCreateGroupModalOpen = () => {
+    setIsCreateGroupModalOpen(true);
+  };
+
+  const handleCreateSavingGroupModalOpen = () => {
+    setIsCreateSavingGroupModalOpen(true);
+  };
+
+  const handleCreateGroupModalClose = () => {
+    setIsCreateGroupModalOpen(false);
+    setIsCreateSavingGroupModalOpen(false);
+  };
+
+  const openExpenseModal = (groupId, initialName, initialDescription) => {
+    setSelectedGroupId(groupId);
+    setName(initialName);
+    setDescription(initialDescription);
+    setShowExpenseModal(true);
+  };
+
+  const closeExpenseModal = () => {
+    setShowExpenseModal(false);
+  };
+
+  const handleEditGroup = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/groups/${selectedGroupId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwt-token"),
+          },
+          body: JSON.stringify({ name, description }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      setShowExpenseModal(false);
+      fetchGroups(); // Llamar de nuevo a fetchGroups después de editar el grupo
+      // Opcional: Limpiar los estados de name y description después de editar
+      setName("");
+      setDescription("");
+    } catch (error) {
+      console.error("Failed to edit group:", error.message);
+      alert("Failed to edit group: " + error.message);
+    }
+  };
+
+  const handleCreateGroupSuccess = () => {
+    fetchGroups();
+  };
 
   return (
     <div className={`Dashboard ${darkMode ? "dark-mode" : "light-mode"}`}>
@@ -70,39 +140,148 @@ function Dashboard() {
                   <td>{group.description}</td>
                   <td>
                     <div className="btn-group" role="group" aria-label="Basic example">
-                      <button onClick={() => navigate(`${group.id}`)} className="btn btn-primary">
-                        Ver grupo
+                      <button onClick={() => openExpenseModal(group.id, group.name, group.description)} className="btn btn-secondary">
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                        Editar
                       </button>
-                      {/*<button onClick={() => navigate(`add/${group.id}`)} className="btn btn-warning">
-                        Añadir participantes
-                      </button>*/}
+                      <button onClick={() => navigate(`${group.id}`)} className="btn btn-primary">
+                        <FontAwesomeIcon icon={faEye} />
+                        Ver
+                      </button>
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {/*
-          <div className="d-flex justify-content-end mt-5">
-            <a href="/group/create" className="btn btn-primary">
-              Crear grupo
-            </a>
-          </div>
-            */}
-          <Link
-                to="/group/create"
-                className={'btn btn-primary'}
-              >
-                Crear grupo de gastos
-              </Link>
-          <Link
-                to="/groups/savinggroup"
-                className={'btn btn-primary'}
-              >
-                Crear grupo de ahorro
-              </Link>
+
+          <button className="btn btn-primary" onClick={handleCreateGroupModalOpen}>
+            Crear grupo de gastos
+          </button>
+          <button className="btn btn-primary" onClick={handleCreateSavingGroupModalOpen}>
+            Crear grupo de ahorros
+          </button>
+          
         </div>
       </div>
+
+  
+
+      <div
+        className={`modal fade ${showExpenseModal ? "show" : ""}`}
+        id="expenseModal"
+        tabIndex="-1"
+        aria-labelledby="expenseModalLabel"
+        aria-hidden="true"
+        style={{ display: showExpenseModal ? "block" : "none" }}
+      >
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="expenseModalLabel">
+                Editar grupo
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={closeExpenseModal}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleEditGroup}>
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Nombre del grupo:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="description" className="form-label">
+                    Descripción:
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="description"
+                    rows="3"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">
+                  Guardar cambios
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div
+        className={`modal fade ${showExpenseModal ? "show" : ""}`}
+        id="expenseModal"
+        tabIndex="-1"
+        aria-labelledby="expenseModalLabel"
+        aria-hidden="true"
+        style={{ display: showExpenseModal ? "block" : "none" }}
+      >
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="expenseModalLabel">
+                Editar grupo
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={closeExpenseModal}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleEditGroup}>
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Nombre del grupo:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="description" className="form-label">
+                    Descripción:
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="description"
+                    rows="3"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">
+                  Guardar cambios
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <CreateGroupModal isOpen={isCreateGroupModalOpen} onClose={handleCreateGroupModalClose} onCreateGroupSuccess={handleCreateGroupSuccess} />
+      <CreateSavingGroupModal isOpen={isCreateSavingGroupModalOpen} onClose={handleCreateGroupModalClose} onCreateGroupSuccess={handleCreateGroupSuccess} />
       <Footer />
     </div>
   );

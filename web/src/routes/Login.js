@@ -3,8 +3,10 @@ import Button from "../components/Button";
 import "./Login.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [darkMode, setDarkMode] = useState(() => {
@@ -34,7 +36,8 @@ export default function Login() {
       const data = await response.json();
       if (data.jwt !== null) {
         localStorage.setItem("jwt-token", data.jwt);
-        window.location.href = "/groups";
+        navigate('/groups'); 
+
       } else {
         alert(data.message);
       }
