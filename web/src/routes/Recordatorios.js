@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import Header from "../components/Header";
-import DocuPDF from "./DocuPDF";
-import "./Recordatorios.css";
 
 // Función para formatear la fecha
 const formatDate = (dateString) => {
@@ -16,20 +12,6 @@ const formatDate = (dateString) => {
 const Recordatorios = () => {
   const [transactions, setTransactions] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
-
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
-
-  const toggleDarkMode = () => {
-    setDarkMode(prevMode => {
-      const newMode = !prevMode;
-      localStorage.setItem('darkMode', newMode);
-      return newMode;
-    });
-  };
-
-  useEffect(() => {
-    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
-  }, [darkMode]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -62,16 +44,16 @@ const Recordatorios = () => {
   }, []);
 
   return (
-    <div className={`Recordatorios ${darkMode ? "dark-mode" : "light-mode"}`}>
-      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-      <div className="text-center">
+    
+        <div className="text-center">
 
-      {transactions && transactions.length > 0 ? (
-        <div className="mt-5">
-          <h2>Próximos gastos</h2>
+        {transactions && transactions.length > 0 ? (
           <ul className="list-group list-group-flush">
             {transactions.map((transaction, index) => (
-              <li className={`list-group-item ${transaction.selecteddate.split('T')[0] === currentDate ? 'bg-danger text-light' : ''}`} key={index}>
+               <li
+               className={`list-group-item ${transaction.selecteddate.split('T')[0] === currentDate ? 'bg-danger text-light' : ''}`}
+               key={index}
+              >
                 <strong>Grupo:</strong> {transaction.group_id}<br />
                 <strong>Monto:</strong> {transaction.amount}<br />
                 <strong>Descripción:</strong> {transaction.description}<br />
@@ -79,25 +61,11 @@ const Recordatorios = () => {
               </li>
             ))}
           </ul>
-        </div>
-      ) : (
-        <div className="mt-5" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "70vh" }}>
-          <h1>No hay transacciones para mostrar</h1>
-        </div>
-      )}
+          ) : (
+            <p>No hay transacciones para mostrar</p>
+        )}
 
-      {transactions && transactions.length > 0 && (
-        <div>
-          <PDFDownloadLink
-            document={<DocuPDF transactions={transactions} />}
-            fileName="transactions.pdf"
-          >
-            <button className="btn btn-info">Descargar transacciones en formato PDF</button>
-          </PDFDownloadLink>
         </div>
-      )}
-      </div>
-    </div>
   );
 };
 
