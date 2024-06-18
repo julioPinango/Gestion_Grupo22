@@ -1,120 +1,155 @@
 import React, { useState, useEffect } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import DocuPDF from "./DocuPDF";
+import "./MyTransactions.css";
 
-const Deudas = () => {
+const MyTransactions = () => {
   const [transactions, setTransactions] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [debtInfo, setDebtInfo] = useState({
-    payer: "",
-    amount: 0,
-    description: "",
-    transactionId: 0
-  });
-
-  const fetchTransactions = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/transactions/debtor', {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
-
-      const data = await response.json();
-      setTransactions(data.Transactions.filter(transaction => transaction.amount > 0));
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
-  };
-
-  const cancelDebt = async () => {
-    try {
-      const { group_id, payer, amount, transactionId } = debtInfo;
-
-      const response = await fetch(
-        'http://localhost:3001/transactions/canceldebt',
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("jwt-token"),
-          },
-          body: JSON.stringify({
-            group_id,
-            payer,
-            amount,
-            transaction_id: transactionId
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error en el servidor");
-      }
-
-      // Actualizar el estado local para reflejar el cambio
-      setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
-      setShowModal(false);
-    } catch (error) {
-      console.error("Error editando la transacción:", error.message);
-      alert("No se pudo editar la transacción: " + error.message);
-    }
-  };
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+  const [category, setCategory] = useState(null);
 
   useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const [debtorResponse, payerResponse] = await Promise.all([
+          fetch("http://localhost:3001/transactions/debtor", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("jwt-token"),
+            },
+          }),
+          fetch("http://localhost:3001/transactions/payer", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("jwt-token"),
+            },
+          }),
+        ]);
+
+        if (!debtorResponse.ok || !payerResponse.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const [debtorData, payerData] = await Promise.all([
+          debtorResponse.json(),
+          payerResponse.json(),
+        ]);
+
+        const combinedTransactions = [...debtorData.Transactions, ...payerData.Transactions];
+        setTransactions(combinedTransactions);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
     fetchTransactions();
   }, []);
 
-  const handleModalOpen = (transaction) => {
-    setDebtInfo({
-      payer: transaction.payer,
-      amount: transaction.amount,
-      description: transaction.description,
-      transactionId: transaction.id
+  useEffect(() => {
+    const fetchTransactionsByCategory = async () => {
+      try {
+        let debtorTransactions = [];
+
+        if (category === null) {
+          // Si la categoría es null, obtener todas las transacciones sin filtrar por categoría
+          const debtorResponse = await fetch("http://localhost:3001/transactions/debtor", {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("jwt-token"),
+              },
+            })
+            
+
+          if (!debtorResponse.ok ) {
+            throw new Error("Failed to fetch transactions");
+          }
+
+          const debtorData = await debtorResponse.json();
+
+          debtorTransactions = debtorData.Transactions;
+        } else {
+          // Si la categoría no es null, obtener transacciones filtradas por categoría
+          const debtorResponse = await 
+            fetch(`http://localhost:3001/transactions/debtor?category=${category}`, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("jwt-token"),
+              },
+            })
+
+          if (!debtorResponse.ok) {
+            throw new Error("Failed to fetch transactions");
+          }
+
+          const debtorData = await debtorResponse.json()
+          
+          debtorTransactions = debtorData.Transactions;
+        }
+
+        setTransactions(debtorTransactions);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchTransactionsByCategory();
+  }, [category]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
     });
-    setShowModal(true);
   };
 
-  return (
-    <div className="text-center">
-      <div>
-        <Header href="/groups" />
-      </div>
+  useEffect(() => {
+    document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+  }, [darkMode]);
 
+
+  return (
+    <div className={`MyTransactions ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <div>
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      </div>
+      <div className="mt-3">
+        <button className="btn btn-primary mr-2">Filtrar por categoría</button>
+        <select
+          className="form-select"
+          id="category"
+          value={category === null ? "Todas las categorías" : category}
+          onChange={(e) => setCategory(e.target.value === "Todas las categorías" ? null : e.target.value)}
+        >
+          <option value={null}>Todas las categorías</option>
+          <option value={1}>Gasto general</option>
+          <option value={2}>Recreación</option>
+          <option value={3}>Servicio</option>
+          <option value={4}>Transporte</option>
+        </select>
+      </div>
       {transactions && transactions.length > 0 ? (
         <div className="table-responsive mt-5">
-          <table className="table table-striped table-sm">
+          <table className="table table-dark table table-striped table-bordered table-responsives">
             <thead>
               <tr>
                 <th scope="col">#</th>
+                <th scope="col">Grupo</th>
                 <th scope="col">Monto</th>
                 <th scope="col">Descripción</th>
-                <th scope="col">Prestador</th>
-                <th scope="col">Acciones</th>
+                <th scope="col">Pagadores</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((transaction, index) => (
                 <tr key={index}>
                   <th scope="row">{index}</th>
+                  <td>{transaction.group_id}</td>
                   <td>{transaction.amount}</td>
                   <td>{transaction.description}</td>
                   <td>{transaction.payer}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => handleModalOpen(transaction)}
-                    >
-                      Saldar deuda
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -125,27 +160,6 @@ const Deudas = () => {
           <h1>No hay transacciones aún</h1>
         </div>
       )}
-
-      {showModal && (
-        <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirmar Pago</h5>
-                
-              </div>
-              <div className="modal-body">
-                <p>¿Estás seguro que deseas pagarle {debtInfo.amount} por {debtInfo.description} a {debtInfo.payer}?</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-danger" onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="button" className="btn btn-success" onClick={cancelDebt}>Confirmar Pago</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {transactions && transactions.length > 0 && (
         <div>
           <PDFDownloadLink
@@ -156,8 +170,9 @@ const Deudas = () => {
           </PDFDownloadLink>
         </div>
       )}
+    <Footer/>
     </div>
   );
 };
 
-export default Deudas;
+export default MyTransactions;

@@ -60,7 +60,7 @@ const getGroup = async (req, res) => {
 
         const query = {
             text: `
-            SELECT g.id, g.name, g.description, g.objetive
+            SELECT g.id, g.name, g.description, g.objetive, g.savings
             FROM groups g
             INNER JOIN members m ON g.id = m.group_id
             WHERE m.username = $1

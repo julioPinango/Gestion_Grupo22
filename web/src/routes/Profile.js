@@ -34,6 +34,7 @@ const Profile = () => {
         }
 
         const userData = await response.json();
+        console.log(userData);
         setUser(userData.user);
         setName(userData.user.name);
         setLastname(userData.user.lastname);
@@ -47,6 +48,11 @@ const Profile = () => {
 
     fetchUser();
   }, []);
+
+  const formatDateOfBirth = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+  };
 
   const handleEditUser = async (e) => {
     e.preventDefault();
@@ -169,21 +175,19 @@ const Profile = () => {
                 className="form-control"
                 id="dateOfBirth"
                 placeholder="Fecha de nacimiento"
-                defaultValue={user.date_of_birth}
+                value={formatDateOfBirth(user.date_of_birth)}
                 disabled
                 style={{ height: "38px", verticalAlign: "middle", marginTop: 0 }}
               />
             </div>
           </div>
-          <div className="col-auto mt-3">
-            <button
-              type="button"
-              className="btn btn-primary btn-sm mb-2"
-              onClick={handleEditUser}
-            >
-              {editMode ? "Guardar cambios" : "Editar"}
-            </button>
-          </div>
+              <button
+                className="btn btn-primary"
+                onClick={handleEditUser}
+              >
+                {editMode ? "Guardar cambios" : "Editar"}
+                
+              </button>
         </form>
       </div>
     </div>

@@ -7,6 +7,26 @@
   padding: 20px; /* Relleno común */
 }
 
+.progress {
+  height: 20px; /* Ajusta según el diseño */
+  line-height: 20px; /* Ajusta según el diseño */
+  text-align: center;
+  color: white; /* Color del texto */
+}
+
+.green {
+  background-color: green; /* Color de fondo verde */
+}
+
+.yellow {
+  background-color: yellow; /* Color de fondo amarillo */
+}
+
+.red {
+  background-color: red; /* Color de fondo rojo */
+}
+
+
 .flex-grow-1 {
   flex-grow: 1;
 }
