@@ -7,7 +7,7 @@ import GenericModal from "../components/GenericModal";
 import Calendar from "react-calendar"; 
 import { Link, useLocation } from "react-router-dom";
 import "./Group.css";
-
+import AddMemberModal from "./AddMemberModal";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
@@ -33,7 +33,9 @@ const Group = () => {
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [objetive, setObjetive] = useState(null);
+  const [savings, setSavings] = useState(null);
   const [isCollaboration, setIsCollaboration] = useState(false);
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   
   const toggleCalendar = () => {
     setCalendarVisible(!calendarVisible);
@@ -78,6 +80,16 @@ const Group = () => {
     return date.toLocaleDateString(undefined, options);
   };
 
+
+  const handleAddMemberModalOpen = () => {
+    setIsAddMemberModalOpen(true);
+  };
+
+  const handleAddMemberModalClose = () => {
+    setIsAddMemberModalOpen(false);
+  };
+
+
   const handleDelete = async (username) => {
     try {
       const response = await fetch(
@@ -110,6 +122,19 @@ const Group = () => {
     }
   };
 
+  const getProgressColor = (savings, objetive) => {
+    const percentage = (savings / objetive) * 100;
+  
+    if (percentage >= 100) {
+      return 'green'; // Clase CSS para color verde
+    } else if (percentage >= 50) {
+      return 'yellow'; // Clase CSS para color amarillo, por ejemplo
+    } else {
+      return 'red'; // Clase CSS para color rojo, por ejemplo
+    }
+  };
+
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -126,8 +151,6 @@ const Group = () => {
 
     return `${year}-${month}-${day}`;
   };
-
-  const [date, setDate] = useState(getCurrentDate());
 
   const addMember = async (member) => {
     try {
@@ -188,6 +211,8 @@ const Group = () => {
       }
 
       setShowExpenseModal(false);
+      setSavings(savings+amount);
+      setDescription("")
       setAmount(0);
       fetchGroup();
     } catch (error) {
@@ -294,7 +319,7 @@ const Group = () => {
           setGroupName(name);
           setGroupDescription(responseData.group.description);
           setObjetive(responseData.group.objetive);
-          
+          setSavings(responseData.group.savings)
         }
       } catch (error) {
         console.error("Error fetching group info:", error);
@@ -403,6 +428,28 @@ const Group = () => {
 
       <div className="container mt-5 mb-5">
       <h2>{groupName}</h2>
+      {objetive !== null && objetive > 0 ? (
+
+        <div className="group-progress">
+  <h3>Progreso del Objetivo</h3>
+  <div className="progress-bar">
+    <div
+      className={`progress ${getProgressColor(savings, objetive)}`}
+      style={{
+        width: `${((savings / objetive) * 100).toFixed(2)}%`,
+      }}
+      >
+      {((savings / objetive) * 100).toFixed(2)}%
+    </div>
+  </div>
+  <p>
+    Objetivo: ${objetive} | Ahorrado: ${savings} | Faltan: $
+    {objetive - savings}
+  </p>
+</div>
+
+
+    ):null}
       <p>
         <span>
           {groupDescription}
@@ -432,7 +479,7 @@ const Group = () => {
             type="button"
             className="btn btn-primary"
             onClick={openExpenseModal}
-          >
+            >
             Colaborar 
           </button>
         ) : (
@@ -446,13 +493,23 @@ const Group = () => {
         )}
 
   {isAdmin && (
+    <div>
+
     <button
       type="button"
       className="btn btn-primary"
       onClick={openAddUserModal}
-    >
+      >
       Agregar miembro
     </button>
+    <button
+    type="button"
+    className="btn btn-primary"
+    onClick={handleAddMemberModalOpen}
+    >
+    AÑADIR MIEMBROS
+  </button>
+    </div>
   )}
   <button
     type="button"
@@ -775,7 +832,10 @@ const Group = () => {
           </div>
         </div>
       </div>
+      <AddMemberModal isOpen={isAddMemberModalOpen} fetchGroup={fetchGroup} onClose={handleAddMemberModalClose} groupId={params.id}/>
+      
     </div>
+
   )
 };
 

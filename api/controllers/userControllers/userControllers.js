@@ -69,8 +69,12 @@ const createUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-
         let query = "SELECT name, lastname, username, email, date_of_birth FROM users";
+        const { q } = req.query;
+
+        if (q) {
+            query += ` WHERE name ILIKE '%${q}%' OR lastname ILIKE '%${q}%' OR username ILIKE '%${q}%' OR email ILIKE '%${q}%'`;
+        }
 
         const result = await client.query(query);
 

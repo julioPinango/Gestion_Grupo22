@@ -121,6 +121,12 @@ function Dashboard() {
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div className="container mt-5">
         <h2 className="text-center">Welcome to BillBuddy</h2>
+        <button className="btn btn-primary" onClick={handleCreateGroupModalOpen}>
+            Crear grupo de gastos
+          </button>
+          <button className="btn btn-primary" onClick={handleCreateSavingGroupModalOpen}>
+            Crear grupo de ahorros
+          </button>
         <h3 className="text-center mt-5">Mis grupos</h3>
         <div className="container text-left">
           <table className="table table-dark table table-striped table-bordered table-responsive" id="tabla">
@@ -154,13 +160,6 @@ function Dashboard() {
               ))}
             </tbody>
           </table>
-
-          <button className="btn btn-primary" onClick={handleCreateGroupModalOpen}>
-            Crear grupo de gastos
-          </button>
-          <button className="btn btn-primary" onClick={handleCreateSavingGroupModalOpen}>
-            Crear grupo de ahorros
-          </button>
           
         </div>
       </div>

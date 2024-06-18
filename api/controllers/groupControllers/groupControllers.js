@@ -20,7 +20,7 @@ const createGroup = async (req, res) => {
 
         await client.query(memberQuery);
 
-        res.status(201).json({ message: 'Group created' }); // TODO: return GroupId
+        res.status(201).json({ message: 'Group created', groupId: groupId }); // TODO: return GroupId
     } catch (error) {
         console.error("Error al crear grupo", error);
         res.status(500).send("Error en el servidor");
@@ -60,7 +60,7 @@ const getGroup = async (req, res) => {
 
         const query = {
             text: `
-            SELECT g.id, g.name, g.description, g.objetive
+            SELECT g.id, g.name, g.description, g.objetive, g.savings
             FROM groups g
             INNER JOIN members m ON g.id = m.group_id
             WHERE m.username = $1

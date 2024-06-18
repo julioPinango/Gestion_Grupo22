@@ -75,10 +75,11 @@ const _createTransaction = async (groupId, from, amount, description, recurrence
 const _addDebtor = async (transactionId, to, amount, from, groupId, description, recurrence) => { //TODO: handle errors
 
     try {
+        const paid = 0;
         const query = {
 
-            text: `INSERT INTO debtors (transaction_id, debtor, amount) VALUES ($1,$2,$3)`,
-            values: [transactionId, to, amount]
+            text: `INSERT INTO debtors (transaction_id, debtor, amount, paid) VALUES ($1,$2,$3,$4)`,
+            values: [transactionId, to, amount, paid]
 
         };
         await client.query(query);
@@ -188,7 +189,7 @@ const getTransactionsByUserDebtor = async (req, res) => {
 
         const queryDebtor = {
             text: `
-            SELECT t.id as id, t.group_id as group_id, t.payer as payer, d.amount as amount, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate, t.category as category
+            SELECT t.id as id, t.group_id as group_id, t.payer as payer, d.amount as amount, d.paid as paid, t.description as description, t.recurrence as recurrence, t.invoice as invoice, t.selecteddate as selecteddate, t.category as category
             FROM transactions t
             INNER JOIN debtors d ON t.id = d.transaction_id
             WHERE debtor = $1`,
@@ -226,15 +227,16 @@ const cancelDebt = async (req, res) => {
         const newAmount = existingTransaction.rows[0].amount - amount;
 
         // Actualizar el monto en la tabla transactions
-        const updateTransactionQuery = {
-            text: 'UPDATE transactions SET amount = $1 WHERE id = $2',
-            values: [newAmount, transactionId]
-        };
-        await client.query(updateTransactionQuery);
-
+        //const updateTransactionQuery = {
+          //  text: 'UPDATE transactions SET amount = $1 WHERE id = $2',
+            //values: [newAmount, transactionId]
+        //};
+        //await client.query(updateTransactionQuery);
+        //const paid = amount;
         // Actualizar el monto en la tabla debtors
+
         const updateDebtorsQuery = {
-            text: 'UPDATE debtors SET amount = amount - $1 WHERE transaction_id = $2 AND debtor = $3',
+            text: 'UPDATE debtors SET paid  = paid + $1 WHERE transaction_id = $2 AND debtor = $3',
             values: [amount, transactionId, from]
         };
         await client.query(updateDebtorsQuery);

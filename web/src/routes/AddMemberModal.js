@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
-  const [groupName, setGroupName] = useState("");
-  const [description, setDescription] = useState("");
+function AddMemberModal({ isOpen, onClose, fetchGroup, groupId }) {
   const [members, setMembers] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [memberSuggestions, setMemberSuggestions] = useState([]);
@@ -35,55 +33,35 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
     fetchAllUsers();
   }, []);
 
-  const handleCreateGroup = async (e) => {
+  const handleAddMembers = async (e) => {
     e.preventDefault();
     try {
-      // Crear el grupo primero
-      const groupResponse = await fetch("http://localhost:3001/groups", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("jwt-token"),
-        },
-        body: JSON.stringify({
-          name: groupName,
-          description,
-        }),
-      });
-
-      const groupData = await groupResponse.json();
-
-      if (!groupResponse.ok) {
-        throw new Error(groupData.message);
+      if (!groupId) {
+        throw new Error("No se ha proporcionado el ID del grupo");
       }
 
-      console.log("Group created:", groupData);
-
-      // Luego, agregar miembros al grupo si se especifican
+      // Agregar miembros al grupo
       await Promise.all(
-        members.map((member) => addMember(groupData.groupId, member))
+        members.map((member) => addMember(groupId, member))
       );
 
       setShowAlert(true);
-      setAlertMessage(`Grupo "${groupName}" creado con éxito!`);
+      setAlertMessage(`Miembros agregados al grupo con éxito!`);
       setTimeout(() => {
         setShowAlert(false);
         setAlertMessage("");
       }, 3000);
 
-      onCreateGroupSuccess(); // Actualizar la lista de grupos en el componente padre
-      onClose(); // Cerrar el modal después de crear el grupo
-      setGroupName("");
-      setDescription("");
+      onClose(); // Cerrar el modal después de agregar miembros
       setMembers([]);
       setMemberSuggestions([]);
     } catch (error) {
-      console.error("Error creating group:", error.message);
-      alert("Failed to create group: " + error.message);
+      console.error("Error adding members:", error.message);
+      alert("Failed to add members: " + error.message);
     }
   };
 
-  const addMember = async (groupId, member) => {
+  const addMember = async (groupId, username) => {
     try {
       const response = await fetch(
         `http://localhost:3001/groups/${groupId}/members`,
@@ -93,22 +71,21 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ username: member }),
+          body: JSON.stringify({ username }),
         }
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to add member");
+        throw new Error(data.message);
       }
 
-      console.log(`Member "${member}" added to group ${groupId} successfully`);
+      console.log(`Member "${username}" added to group ${groupId} successfully`);
+      fetchGroup();
     } catch (error) {
       console.error("Error adding member:", error.message);
-      if (error.message === "Failed to add member") {
-        alert("No se puede agregar un usuario inexistente");
-      } else {
-        alert("No se pudo agregar el participante: " + error.message);
-      }
+      alert("Failed to add member: " + error.message);
     }
   };
 
@@ -142,8 +119,8 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
   };
 
   const handleSelectMember = (selectedMember) => {
-    if (!members.includes(selectedMember)) {
-      setMembers([...members, selectedMember]);
+    if (!members.includes(selectedMember.username)) {
+      setMembers([...members, selectedMember.username]);
     }
     setSearchUser(""); // Limpiar el campo de búsqueda después de seleccionar
     setMemberSuggestions([]); // Limpiar las sugerencias
@@ -157,17 +134,17 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
   return (
     <div
       className={`modal fade ${isOpen ? "show" : ""}`}
-      id="createGroupModal"
+      id="addMemberModal"
       tabIndex="-1"
-      aria-labelledby="createGroupModalLabel"
+      aria-labelledby="addMemberModalLabel"
       aria-hidden={!isOpen}
       style={{ display: isOpen ? "block" : "none" }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title" id="createGroupModalLabel">
-              Crear grupo
+            <h5 className="modal-title" id="addMemberModalLabel">
+              Agregar Miembros al Grupo
             </h5>
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
@@ -177,40 +154,16 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
                 {alertMessage}
               </div>
             )}
-            <form onSubmit={handleCreateGroup}>
-              <div className="mb-3">
-                <label htmlFor="groupName" className="form-label">
-                  Nombre del grupo
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="groupName"
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="groupDescription" className="form-label">
-                  Descripción
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="groupDescription"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
+            <form onSubmit={handleAddMembers}>
               <div className="mb-3">
                 <label htmlFor="groupMembers" className="form-label">
-                  Agregar miembros (separados por coma)
+                  Buscar y seleccionar miembros para agregar al grupo
                 </label>
                 <input
                   type="text"
                   className="form-control"
                   id="groupMembers"
-                  value={searchUser} // Usamos 'searchUser' para la búsqueda de usuarios
+                  value={searchUser}
                   onChange={handleSearchUser}
                 />
                 {memberSuggestions.length > 0 && (
@@ -219,7 +172,7 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
                       <li
                         key={index}
                         className="list-group-item list-group-item-action"
-                        onClick={() => handleSelectMember(member.username)}
+                        onClick={() => handleSelectMember(member)}
                       >
                         {member.username}
                       </li>
@@ -227,32 +180,30 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
                   </ul>
                 )}
               </div>
-              <div>
-                {members.length > 0 && (
-                  <div className="mb-3">
-                    <strong>Miembros seleccionados:</strong>
-                    <ul className="list-group mt-2">
-                      {members.map((member, index) => (
-                        <li
-                          key={index}
-                          className="list-group-item d-flex justify-content-between align-items-center"
+              {members.length > 0 && (
+                <div className="mb-3">
+                  <strong>Miembros seleccionados:</strong>
+                  <ul className="list-group mt-2">
+                    {members.map((member, index) => (
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        {member}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleRemoveMember(member)}
                         >
-                          {member}
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleRemoveMember(member)}
-                          >
-                            Remove
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <button type="submit" className="btn btn-primary">
-                Crear
+                Agregar Miembros
               </button>
             </form>
           </div>
@@ -262,10 +213,11 @@ function CreateGroupModal({ isOpen, onClose, onCreateGroupSuccess }) {
   );
 }
 
-CreateGroupModal.propTypes = {
+AddMemberModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onCreateGroupSuccess: PropTypes.func.isRequired,
+  fetchGroup: PropTypes.func.isRequired,
+  groupId: PropTypes.string.isRequired, // Propiedad requerida para el ID del grupo
 };
 
-export default CreateGroupModal;
+export default AddMemberModal;
