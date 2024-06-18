@@ -20,7 +20,7 @@ const createGroup = async (req, res) => {
 
         await client.query(memberQuery);
 
-        res.status(201).json({ message: 'Group created' }); // TODO: return GroupId
+        res.status(201).json({ message: 'Group created', groupId: groupId }); // TODO: return GroupId
     } catch (error) {
         console.error("Error al crear grupo", error);
         res.status(500).send("Error en el servidor");
