@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket, faCalendarDays, faUser, faBell, faChartSimple } from "@fortawesome/free-solid-svg-icons";
-
 import "./Header.css";
 import lightmodenombre from "../img/lightmodenombre.png";
 import darkmodeNombre from "../img/darkmodenombre.png";
 import logo from "../img/LogoBillbuddy.png";
+import Recordatorios from "../routes/Recordatorios";
 
 const Header = ({ toggleDarkMode, darkMode }) => {
   const handleLogout = () => {
@@ -15,6 +15,7 @@ const Header = ({ toggleDarkMode, darkMode }) => {
   const token = localStorage.getItem("jwt-token");
   const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showRecordatorios, setShowRecordatorios] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -61,18 +62,33 @@ const Header = ({ toggleDarkMode, darkMode }) => {
               >
                 <FontAwesomeIcon icon={faUser} />
               </Link>
-              <Link
-                to="/recordatorios"
-                className={`nav-item nav-link ${location.pathname === "/recordatorios" ? "active" : ""}`}
-              >
-                <FontAwesomeIcon icon={faCalendarDays} />
-              </Link>
+
+              <div className="nav-item nav-link recordatorios-container" style={{ position: 'relative' }}>
+                <div
+                  className={`notification-icon recordatorios-text ${showRecordatorios ? "active" : ""}`}
+                  onClick={() => setShowRecordatorios(prevShow => !prevShow)}
+                >
+                  <FontAwesomeIcon icon={faCalendarDays} className={darkMode ? "dark-mode-icon" : ""} />
+                </div>
+                {showRecordatorios && (
+                  <div className="popover recordatorios-popover" style={{ display: 'block', width: '500px' }}>
+                    <div className="arrow"></div>
+                    <h3 className="popover-header">Recordatorios</h3>
+                    <div className="popover-body">
+                      <Recordatorios/>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <Link
                 to="/charts"
                 className={`nav-item nav-link ${location.pathname === "/charts" ? "active" : ""}`}
               >
                 <FontAwesomeIcon icon={faChartSimple} />
+                
               </Link>
+
               <div className="nav-item nav-link notification-container">
                 <div
                   className={`notification-icon notifications-text ${showNotifications ? "active" : ""}`}
@@ -108,6 +124,7 @@ const Header = ({ toggleDarkMode, darkMode }) => {
                   </div>
                 )}
               </div>
+
               <Link
                 to="/groups"
                 className={`nav-item nav-link nav-fill ${location.pathname === "/groups" && !showNotifications ? "active" : ""}`}
