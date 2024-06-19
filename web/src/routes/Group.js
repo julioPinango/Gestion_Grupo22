@@ -11,6 +11,7 @@ import AddMemberModal from "./AddMemberModal";
 
 const Group = () => {
   const [users, setUsers] = useState([]);
+  
   const [usuarioAAgregar, setUsuarioAAgregar] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -244,7 +245,7 @@ const Group = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("jwt-token"),
           },
-          body: JSON.stringify({ payer, amount, participants, description, recurrence, selectedDate: formattedDate, category }),
+          body: JSON.stringify({ payer, amount, participants, description, recurrence, selectedDate: formattedDate, category, type: "deuda" }),
         }
       );
 
@@ -452,12 +453,11 @@ const Group = () => {
     ):null}
       <p>
         <span>
-          {groupDescription}
-          {isAdmin && (
-            <Link to={`/groups/${params.id}/edit`} style={{ padding: "0 10px" }}>
-              <img src="/editar.png" width="20" height="20" alt="Editar" />
-            </Link>
-          )}
+          
+         
+      {objetive !== null && objetive > 0 ? 
+       null : (
+          
           <div class="container mt-3">
             <div class="row justify-content-center">
               <div class="col-md-3">
@@ -469,6 +469,7 @@ const Group = () => {
               </div>
             </div>
           </div>
+    )}
         </span>
       </p>
     </div>
@@ -493,23 +494,14 @@ const Group = () => {
         )}
 
   {isAdmin && (
-    <div>
-
-    <button
-      type="button"
-      className="btn btn-primary"
-      onClick={openAddUserModal}
-      >
-      Agregar miembro
-    </button>
+    
     <button
     type="button"
     className="btn btn-primary"
     onClick={handleAddMemberModalOpen}
     >
-    AÑADIR MIEMBROS
+    Añadir miembros
   </button>
-    </div>
   )}
   <button
     type="button"
@@ -540,15 +532,21 @@ const Group = () => {
                 <td>{user1.lastname}</td>
                 <td>{user1.username}</td>
                 <td>
-                  {isAdmin && (
+                  {isAdmin ? (
                     <button
                       type="button"
                       className="btn btn-danger"
                       onClick={() => handleDelete(user1.username)}
                     >
-                      🗑️ Eliminar participante
+                      {user1.username === loggedUser ? "🗑️Salir del grupo" : " 🗑️ Eliminar participante"}
                     </button>
-                  )}
+                  ): <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(user1.username)}
+                >
+                  {user1.username === loggedUser ? "🗑️Salir del grupo" : " Participante"}
+                </button>}
                 </td>
               </tr>
             )) : null}

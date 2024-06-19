@@ -29,7 +29,7 @@ const FacturaPDF = ({ payer, amount, description, date }) => {
 
         <View style={{ marginTop: "150px" }}> {}
           <Text style={{ textAlign: "left", marginLeft: "30px", marginTop: "22px" }}>
-            Hoy {formattedDate}
+            El día {formattedDate}
           </Text>
           
           <Text style={{ textAlign: "left", marginLeft: "30px", marginTop: "22px" }}>

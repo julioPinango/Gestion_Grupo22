@@ -7,8 +7,8 @@ const addTransaction = async (req, res) => {
     try {
         const groupId = req.params.group_id;
         const username = req.user.username;
-        const { amount, participants, payer, description, recurrence, selectedDate, invoice, category } = req.body;
-
+        const { amount, participants, payer, description, recurrence, selectedDate, invoice, category, type } = req.body;
+        console.log(type);
         if (!await isMember(groupId, username)) {
             console.error("Error at adding transaction: Not a member.");
             return res.status(401).json({ message: 'Not authorized.' });
@@ -39,7 +39,7 @@ const addTransaction = async (req, res) => {
                     continue
                 }
 
-                await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence)
+                await _addDebtor(transactionId, participants[i], amount / participants.length, payer, groupId, description, recurrence, type)
             }
         } else { //it's a saving
             await _updateGroupSavings(groupId, payer, amount, description)
@@ -72,7 +72,7 @@ const _createTransaction = async (groupId, from, amount, description, recurrence
     }
 };
 
-const _addDebtor = async (transactionId, to, amount, from, groupId, description, recurrence) => { //TODO: handle errors
+const _addDebtor = async (transactionId, to, amount, from, groupId, description, recurrence, type) => { //TODO: handle errors
 
     try {
         const paid = 0;
@@ -86,7 +86,7 @@ const _addDebtor = async (transactionId, to, amount, from, groupId, description,
 
         await updateBalances(amount, groupId, from)
         await updateBalances(-amount, groupId, to)
-        await pushNotification(groupId, from, to, amount, description, recurrence)
+        await pushNotification(groupId, from, to, amount, description, recurrence, type)
     } catch (error) {
         console.error("Error al obtener los datos:", error);
     }
@@ -216,6 +216,9 @@ const cancelDebt = async (req, res) => {
         const groupId = req.body.group_id;
         const to = req.body.payer;
         const amount = req.body.amount;
+        const recurrence = req.body.recurrence;
+        const description = req.body.description;
+        const type = req.body.type;
         const transactionId = req.body.transaction_id;
 
         const existingTransaction = await client.query('SELECT * FROM transactions WHERE id = $1', [transactionId]);
@@ -244,6 +247,7 @@ const cancelDebt = async (req, res) => {
         // Actualizar los saldos de los miembros del grupo
         await updateBalances(amount, groupId, from);
         await updateBalances(-amount, groupId, to);
+        await pushNotification(groupId, from, to, amount, description, recurrence, type)
 
         res.json({ message: 'Se canceló la deuda con éxito' });
 

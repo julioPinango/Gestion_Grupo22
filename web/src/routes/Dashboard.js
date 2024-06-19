@@ -82,7 +82,7 @@ function Dashboard() {
 
   const handleEditGroup = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch(
         `http://localhost:3001/groups/${selectedGroupId}`,
@@ -95,15 +95,28 @@ function Dashboard() {
           body: JSON.stringify({ name, description }),
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-
+  
+      // Cerrar el modal de edición
       setShowExpenseModal(false);
-      fetchGroups(); // Llamar de nuevo a fetchGroups después de editar el grupo
-      // Opcional: Limpiar los estados de name y description después de editar
+  
+      // Actualizar el estado de groups con el grupo modificado
+      setGroups(groups.map(group => {
+        if (group.id === selectedGroupId) {
+          return {
+            ...group,
+            name: name,
+            description: description
+          };
+        }
+        return group;
+      }));
+  
+      // Limpiar los estados de name y description después de editar
       setName("");
       setDescription("");
     } catch (error) {
@@ -111,6 +124,7 @@ function Dashboard() {
       alert("Failed to edit group: " + error.message);
     }
   };
+  
 
   const handleCreateGroupSuccess = () => {
     fetchGroups();
@@ -120,7 +134,7 @@ function Dashboard() {
     <div className={`Dashboard ${darkMode ? "dark-mode" : "light-mode"}`}>
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div className="container mt-5">
-        <h2 className="text-center">Welcome to BillBuddy</h2>
+        <h2 className="text-center">Te damos la bienvenida a BillBuddy</h2>
         <button className="btn btn-primary" onClick={handleCreateGroupModalOpen}>
             Crear grupo de gastos
           </button>

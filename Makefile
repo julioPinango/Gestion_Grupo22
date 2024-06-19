@@ -22,7 +22,7 @@ create-debtors:
 	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS debtors (transaction_id INT, debtor VARCHAR(100), amount FLOAT, paid FLOAT , PRIMARY KEY (transaction_id, debtor), FOREIGN KEY (debtor) REFERENCES users(username), FOREIGN KEY (transaction_id) REFERENCES transactions(id));"
 
 create-notifications:
-	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400), recurrence VARCHAR(20), selectedDate DATE, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
+	docker exec -it billbudy_db psql -U billbudyUser -d billbudy -c "CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, group_id INT, from_username VARCHAR(100), to_username VARCHAR(100), amount FLOAT, description VARCHAR(400), recurrence VARCHAR(20), type VARCHAR(20), selectedDate DATE, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (from_username) REFERENCES users(username), FOREIGN KEY (to_username) REFERENCES users(username));"
 
 create-tables: create-users create-groups create-members create-transactions create-debtors create-notifications
 	

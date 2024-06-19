@@ -109,16 +109,23 @@ const Header = ({ toggleDarkMode, darkMode }) => {
                 {showNotifications && (
                   <div className="popover" style={{ display: 'block' }}>
                     <div className="arrow"></div>
-                    <h3 className="popover-header">Notifications</h3>
+                    <h3 className="popover-header">Notificaciones</h3>
                     <div className="popover-body">
                       <ul className="list-group">
-                        {notifications.map((notification, index) => (
-                          <li key={index} className="list-group-item">
-                            Recibiste {notification.amount} de {notification.from_username}.
-                            <br />
-                            En concepto de: {notification.description}
-                          </li>
-                        ))}
+                      {notifications.map((notification, index) => (
+  <li key={index} className="list-group-item">
+    {notification.type === "pago" ? (
+      <>
+        {notification.from_username} te pagó {notification.amount} en concepto de {notification.description}.
+      </>
+    ) : (
+      <>
+        Le debes {notification.amount} a {notification.from_username} en concepto de: {notification.description}
+      </>
+    )}
+  </li>
+))}
+
                       </ul>
                     </div>
                   </div>
@@ -131,12 +138,14 @@ const Header = ({ toggleDarkMode, darkMode }) => {
               >
                 Grupos
               </Link>
+              {/*
               <Link
-                to="/transactions"
-                className={`nav-item nav-link ${location.pathname === "/transactions" && !showNotifications ? "active" : ""}`}
+              to="/transactions"
+              className={`nav-item nav-link ${location.pathname === "/transactions" && !showNotifications ? "active" : ""}`}
               >
-                Transacciones
+              Transacciones
               </Link>
+              */}
               <Link
                 to="/deudas"
                 className={`nav-item nav-link ${location.pathname === "/deudas" && !showNotifications ? "active" : ""}`}

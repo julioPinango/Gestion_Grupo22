@@ -24,11 +24,11 @@ const getNotifications = async (req, res) => {
     }
 };
 
-const pushNotification = async (groupId, from, to, amount, description, recurrence) => {
+const pushNotification = async (groupId, from, to, amount, description, recurrence, type) => {
     try {
         const query = {
-            text: `INSERT INTO notifications (group_id, from_username, to_username, amount, description, recurrence) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-            values: [groupId, from, to, amount, description, recurrence]
+            text: `INSERT INTO notifications (group_id, from_username, to_username, amount, description, recurrence, type) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+            values: [groupId, from, to, amount, description, recurrence, type]
         };
         result = await client.query(query);
     } catch (error) {

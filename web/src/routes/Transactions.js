@@ -141,7 +141,7 @@ const Transactions = () => {
               <th scope="col">Pagadores</th>
               <th scope="col">Deudores</th>
               <th scope="col">Acciones</th>
-              <th scope="col">Factura</th>
+              <th scope="col">Compobante</th>
             </tr>
           </thead>
           <tbody>
@@ -193,6 +193,7 @@ const Transactions = () => {
         </table>
       </div>
 
+{/*
       {transactions && transactions.length > 0 && (
         <div>
           <PDFDownloadLink
@@ -205,7 +206,7 @@ const Transactions = () => {
           </PDFDownloadLink>
         </div>
       )}
-
+    */}
       {/* Modal para editar la descripción de la transacción */}
       {isModalOpen && (
         <div
